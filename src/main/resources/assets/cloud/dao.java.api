@@ -1,0 +1,46 @@
+package net.woaoo.skyline.club.dao;
+
+import net.woaoo.common.dao.BaseDao;
+import net.woaoo.skyline.club.domain.Club;
+
+import java.util.List;
+
+public interface ClubDao extends BaseDao<Club> {
+    /**
+     * 批量查询
+     *
+     * @param
+     * @return
+     * @auther zhangdj
+     * @date 2018/8/9 9:44
+     */
+    List<Club> findByIds(List<Long> ids);
+
+    /**
+     * 查找指定用户管理的俱乐部
+     *
+     * @param
+     * @return
+     * @auther zhangdj
+     * @date 2018/8/10 16:06
+     */
+    List<Club> findManageClub(Long userId);
+
+    /**
+     * 获取用户参与的俱乐部数
+     *
+     * @param userId
+     * @return {@link Integer}
+     * @author zhangdj
+     * @date 2018/8/11 09:26
+     **/
+    Integer findJoinClubCount(Long userId);
+
+    /**
+     * 获取用户加入的俱乐部
+     *
+     * @param userId
+     * @return
+     */
+    List<Club> findJoinClub(Long userId);
+}

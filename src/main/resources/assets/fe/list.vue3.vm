@@ -1,0 +1,201 @@
+/*
+* Copyright (c) 2012, 2021, Wedon and/or its affiliates. All rights reserved.
+*
+*/
+
+<template>
+    <div class="wdn-panel">
+        <el-form :inline="true" ref="queryForm" :model="queryVo" :rules="queryRules" size="small">
+            <el-form-item label="名称" prop="name">
+                <el-input v-model="queryVo.name" placeholder="请输入"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" plain @click="search()">查询</el-button>
+                <el-button type="default" plain @click="reset()">重置</el-button>
+            </el-form-item>
+            <el-form-item style="float: right">
+                <el-button type="primary" @click="toAdd()">添加</el-button>
+            </el-form-item>
+        </el-form>
+
+        <bg-table
+                :table-data="tableData"
+                @tableChange="handleTableChange"
+                border>
+
+            #foreach($field in $fieldList)
+                <el-table-column
+                        prop="$field"
+                        label="$field">
+                </el-table-column>
+            #end
+            <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="90">
+                <template v-slot="scope">
+                    <el-button type="text" size="small" @click="toEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="text" size="small" @click="toRemove(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </bg-table>
+
+        <!-- 编辑 -->
+        <el-dialog v-bind:title="obj.id ? '编辑': '添加'" v-model="editDialogShow"
+                   custom-class="wdn-modal-content el-dialog-input-300"
+                   :close-on-click-modal="false">
+            <edit @saveDone="handleSaveDone" :obj="obj"></edit>
+        </el-dialog>
+    </div>
+</template>
+<script>
+    import Edit from "./edit.vue";
+    import httpUtil from '@/libs/axios'
+    import { ElMessageBox, ElMessage } from 'element-plus'
+    import {defineComponent, onMounted, reactive, ref, toRefs} from 'vue';
+
+    export default defineComponent({
+        name: 'studentList',
+        components: {
+            Edit
+        },
+        setup(props, context) {
+            const queryForm = ref(null)
+            let state = reactive({
+                /*** 表格数据**/
+                tableData: {
+                    pageSize: 10,
+                    pageNum: 1,
+                },
+                /*** 查询参数校验规则**/
+                queryRules: {},
+                /*** 查询参数**/
+                queryVo: {},
+                /*** 修改对话框是否显示*/
+                editDialogShow: false,
+                /** * 修改对话框数据*/
+                obj: {},
+                /*** 修改对话框数据索引值*/
+                objIndex: null,
+            })
+
+            /**
+             * 编辑表单执行完成
+             */
+            function handleSaveDone(args) {
+                state.editDialogShow = false;
+                console.log("event", args)
+                if (args == true) {
+                    findByCondition();
+                } else {
+                    console.log("失败了，什么都不做");
+                }
+            }
+
+            /**
+             * 表格变化时候执行  主要是pageNum和pageSize
+             */
+            function handleTableChange(obj) {
+                state.tableData = obj;
+                console.log("change", obj)
+                findByCondition();
+            }
+
+            function search() {
+                state.tableData.pageNum = 1;
+                findByCondition();
+            }
+
+            /**
+             * 重置查询表单
+             */
+            function reset() {
+                queryForm.value.resetFields();
+                state.tableData.pageNum = 1;
+                state.tableData.pageSize = 10;
+                findByCondition();
+            }
+
+            /**
+             * 查询
+             */
+            async function findByCondition() {
+                let tableData = await httpUtil.postByJson(`/${artifactId}/v1/${objName}/findByCondition?pageNum=${state.tableData.pageNum}&pageSize=${state.tableData.pageSize}`, state.queryVo);
+                console.log("data: ", tableData);
+                if (tableData) {
+                    state.tableData = tableData;
+                }
+            }
+
+            /**
+             * 跳转到添加数据页面
+             */
+            function toAdd() {
+                console.log("to add dialog")
+                state.editDialogShow = true;
+                state.obj = {};
+                state.objIndex = -1;
+            }
+
+            /**
+             * 唤起编辑对话框
+             */
+            function toEdit(idx, row) {
+                console.log("edit：", row)
+                state.obj = JSON.parse(JSON.stringify(row));
+                state.objIndex = idx;
+                state.editDialogShow = true;
+            }
+
+            /**
+             * 删除数据
+             */
+            async function toRemove(idx, row) {
+                ElMessageBox.confirm('数据删除后无法找回, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(async () => {
+
+                    console.log("删除：", idx, row)
+                    let res = await httpUtil.postByForm(`/${artifactId}/v1/${objName}/delete?id=${row.id}`);
+                    if (res == true) {
+                        ElMessage({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        // 原来第几页还是从第几页开始
+                        await findByCondition();
+                    } else if (res == false) {
+                        console.log("删除失败");
+                        ElMessage({
+                            type: 'error',
+                            message: '删除失败!'
+                        });
+                    }
+                }).catch(() => {
+                    //  取消状态
+                });
+            }
+
+            onMounted(() => {
+                console.log(context);
+                findByCondition();
+            })
+            return {
+                queryForm,
+                ...toRefs(state),
+                handleSaveDone,
+                handleTableChange,
+                search,
+                reset,
+                findByCondition,
+                toAdd,
+                toEdit,
+                toRemove
+            }
+        },
+    })
+</script>
+<style scoped lang="scss" src="./css/list.scss">
+</style>

@@ -1,0 +1,21 @@
+const urlName = '/organ/v1'
+export default API => ({
+    getBanner() {
+        return API({ url: '/banner' });
+    },
+    getTemplate() {
+        return API({ url: '/templates' });
+    },
+    getFindByCondition({ params, data }) {
+        return API({ url: `${urlName}/${objName}/findByCondition`, params, data });
+    },
+    postSave({ params, data }) {
+        return API({ url: `${urlName}/${objName}/save`, method:'post', params, data });
+    },
+    postFindById({ params, data }){
+        return API({ url: `${urlName}/${objName}/findById`, method:'post', params, data });
+    },
+    postDelete({ params, data }){
+        return API({ url: `${urlName}/${objName}/delete`, method:'post', params, data });
+    }
+})

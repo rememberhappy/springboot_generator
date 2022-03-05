@@ -1,0 +1,44 @@
+package net.woaoo.skyline.club.api.hystrix;
+
+import com.github.pagehelper.PageInfo;
+import net.woaoo.common.RespDto;
+import net.woaoo.skyline.club.api.IClubAgent;
+import net.woaoo.skyline.club.dto.ClubDto;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * 服务断路器
+ *
+ * @author auto-coder
+ * @create 2018-08-10 09:29
+ */
+@Component
+public class ClubServiceHystrix implements IClubAgent {
+
+    @Override
+    public RespDto<PageInfo<ClubDto>> findByConditionWithPage(Integer pageNum, Integer pageSize, ClubDto clubDto) {
+        return RespDto.fail("分页查询失败");
+    }
+
+    @Override
+    public RespDto<List<ClubDto>> findByCondition(ClubDto clubDto) {
+        return RespDto.fail("条件查询失败");
+    }
+
+    @Override
+    public RespDto<Long> saveClub(ClubDto club) {
+        return RespDto.fail("保存用户失败");
+    }
+
+    @Override
+    public RespDto<ClubDto> findById(Long id) {
+        return RespDto.fail("通过id查询失败");
+    }
+
+    @Override
+    public RespDto<Boolean> delete(Long id, Long operatorId) {
+        return RespDto.fail("删除失败");
+    }
+}

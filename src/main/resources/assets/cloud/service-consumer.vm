@@ -1,0 +1,19 @@
+package ${basePackage}.${objName}.service;
+
+import ${basePackage}.${objName}.service.hystrix.${domainSimpleName}ServiceHystrix;
+import ${basePackage}.${objName}.api.I${domainSimpleName}Agent;
+##import ${basePackage}.${objName}.dto.${domainSimpleName}Dto;
+import org.springframework.cloud.netflix.feign.FeignClient;
+##import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+* 模块相关接口
+* skyline-server服务名，不区分大小写，我奥规定：一律小写
+* @author ${author}
+* @create ${createDate}
+*/
+@FeignClient(value = "${artifactId}-server", fallback = ${domainSimpleName}ServiceHystrix.class)
+public interface I${domainSimpleName}AgentService extends I${domainSimpleName}Agent{
+
+
+}

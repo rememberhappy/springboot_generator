@@ -1,0 +1,17 @@
+package ${daoPackage};
+
+import cc.wdcloud.base.BaseDao;
+import ${domainPackage}.${domainName};
+
+
+/**
+ * todo 写下本dao  你的注释
+ *
+ * @author ${author}
+ * @version 1.0.0
+ * @createdAt ${createDate}
+ * @updatedAt ${createDate}
+ */
+public interface ${daoName} extends BaseDao<${domainName}>{
+
+}

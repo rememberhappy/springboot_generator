@@ -1,0 +1,85 @@
+/*
+* Copyright (c) 2012, 2021, Wedon and/or its affiliates. All rights reserved.
+*
+*/
+
+<template>
+    <div id="main">
+        <el-form ref="editForm" :rules="rules" :model="formObj" label-width="120px" size="small">
+            #foreach($field in $fieldList)
+                <el-form-item label="$field" prop="$field">
+                    <el-input v-model="formObj.$field" placeholder="请输入"></el-input>
+                </el-form-item>
+            #end
+
+            <el-form-item class="modal-footer">
+                <el-button type="default" @click="cancel">取消</el-button>
+                <el-button type="primary" @click="save">保存</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</template>
+
+<script>
+    import {defineComponent, onMounted, reactive, ref, toRefs,computed } from 'vue';
+    import httpUtil from '@/libs/axios'
+    import { ElMessageBox } from 'element-plus'
+    export default defineComponent({
+        name: "edit",
+        props: {
+            obj: {
+                type: Object,
+                default: () => {
+                }
+            }
+        },
+        emits: ['saveDone'],
+        setup(params, context) {
+            const editForm = ref(null)
+            const state = reactive({
+                rules: {}
+            });
+            const formObj = computed(()=>{
+                return params.obj
+            })
+            async function save() {
+                let valid = await editForm.value.validate();
+                console.log("valid", valid)
+                if (!valid) {
+                    return false;
+                }
+                let res = await httpUtil.postByJson(`/${artifactId}/v1/${objName}/save`, proxy.formObj);
+                console.log("创建成功")
+                if (res) {
+                    context.emit('saveDone', true)
+                } else {
+                    ElMessageBox.alert({
+                        title: '警告',
+                        type: 'warning',
+                        message: '保存失败'
+                    });
+                    context.emit('saveDone', false)
+                }
+            }
+
+            function cancel() {
+                console.log("取消")
+                context.emit('saveDone', false)
+            }
+
+            onMounted(() => {
+                // todo
+            });
+            return {
+                editForm,
+                ...toRefs(state),
+                save,
+                cancel,
+                formObj
+            }
+        }
+    })
+</script>
+
+<style scoped lang="scss" src="./css/edit.scss">
+</style>

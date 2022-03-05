@@ -1,0 +1,165 @@
+<template>
+    <div class="editBox">
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="wd-ruleForm">
+                    <el-form-item label="名称" prop="name">
+                        <el-input v-model="ruleForm.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="地址" prop="address">
+                        <el-input v-model="ruleForm.address"></el-input>
+                    </el-form-item>
+                    <el-form-item label="编码" prop="code">
+                        <el-input v-model="ruleForm.code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮政编码" prop="postcode">
+                        <el-input v-model="ruleForm.postcode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮件" prop="mail">
+                        <el-input v-model="ruleForm.mail"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="ruleForm.phone"></el-input>
+                    </el-form-item>
+                    <!-- <el-form-item label="号码" prop="postcode">
+                        <el-input v-model="ruleForm.postcode"></el-input>
+                    </el-form-item> -->
+                    <el-form-item label="号码" prop="regionCode">
+                        <el-input v-model="ruleForm.regionCode"></el-input>
+                    </el-form-item>
+                    <el-form-item label="简称" prop="shortName">
+                        <el-input v-model="ruleForm.shortName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态" prop="status">
+                        <el-select v-model="ruleForm.status" placeholder="请选择">
+                        <el-option label="进行中" value="0"></el-option>
+                        <el-option label="草稿" value="1"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="类型" prop="type">
+                        <el-select v-model="ruleForm.type" placeholder="请选择">
+                        <el-option label="课程" value="1"></el-option>
+                        <el-option label="考试" value="2"></el-option>
+                        </el-select>
+                    </el-form-item>
+
+                    <el-form-item>
+                        <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+                        <el-button @click="resetForm('ruleForm')">重置</el-button>
+                    </el-form-item> 
+                </el-form>
+        </div>
+</template>
+
+<script>
+  export default {
+      name: 'edit',
+    data() {
+      return {
+        ruleForm: {
+          address: "",
+          code: "",
+          id: null,
+          mail: "",
+          name: "",
+          phone: "",
+          postcode: "",
+          regionCode: "",
+          shortName: "",
+          status: '',
+          type: '',
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入名称', trigger: 'blur' },
+            // { max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          address: [
+            { required: true, message: '请输入地址', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          mail: [
+            { required: true, message: '请输入邮件', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          code: [
+            { required: true, message: '请输入编码', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          phone: [
+            { required: true, message: '请输入手机号', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          postcode: [
+            { required: true, message: '请输入号码', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          regionCode: [
+            { required: true, message: '请输入号码', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          shortName: [
+            { required: true, message: '请输入简称', trigger: 'blur' },
+            // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          status: [
+            { required: true, message: '请选择状态', trigger: 'change' }
+          ],
+          type: [
+            { required: true, message: '请选择类型', trigger: 'change' }
+          ],
+        }
+      };
+    },
+    methods: {
+      save(){
+        this.$api.save({
+          data: this.ruleForm
+        }).then( res => {
+          console.log(res)
+        })
+      },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.save();
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
+      }
+    }
+  }
+</script>
+<style lang="stylus" >
+.editBox
+    margin-top:50px;
+    .el-form-item
+        width:440px;
+    .line
+        text-align:center;
+    .el-form-item__label
+        font-size: 16px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #261B57;
+    .el-select
+        width:100%;
+    .el-input__inner
+        height: 40px;
+        background: #FFFFFF;
+        border-radius: 6px;
+        border: 1px solid #DCD7EE;
+    .el-button{
+        width: 150px;
+        height: 40px;
+    }
+    .el-button--primary{
+        background: #6447E4;
+        span{
+            color: #ffffff;
+        }
+    }
+</style>

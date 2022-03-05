@@ -1,0 +1,32 @@
+package ${basePackage};
+
+import com.ctrip.framework.apollo.spring.annotation.EnableApolloConfig;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+/**
+ * todo  换成你的注释
+ *
+ * @author ${author}
+ * @version 1.0.0
+ * @createdAt ${createDate}
+ * @updatedAt ${createDate}
+ */
+@SpringBootApplication
+@MapperScan("${basePackage}")
+@EnableSwagger2
+@EnableFeignClients
+@EnableApolloConfig
+//根据实际需要开启
+@EnableDiscoveryClient
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication application = new SpringApplication(Application.class);
+        application.setAllowBeanDefinitionOverriding(true);
+        application.run(args);
+    }
+}

@@ -1,0 +1,45 @@
+package ${basePackage}.${objName}.api.hystric;
+
+import com.github.pagehelper.PageInfo;
+##import ${basePackage}.${objName}.service.I${domainSimpleName}Service;
+import ${basePackage}.${objName}.api.I${domainSimpleName}Agent;
+import ${groupName}.common.RespDto;
+import ${basePackage}.${objName}.dto.${domainSimpleName}Dto;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+* 服务断路器
+*
+* @author ${author}
+* @create ${createDate}
+*/
+@Component
+public class ${domainSimpleName}ServiceHystrix implements I${domainSimpleName}Agent {
+
+    @Override
+    public RespDto<PageInfo<${domainSimpleName}Dto>> findByConditionWithPage(Integer pageNum, Integer pageSize, ${domainSimpleName}Dto ${objName}Dto) {
+        return RespDto.fail("分页查询失败");
+    }
+
+    @Override
+    public RespDto<List<${domainSimpleName}Dto>> findByCondition(${domainSimpleName}Dto ${objName}Dto) {
+        return RespDto.fail("条件查询失败");
+    }
+
+    @Override
+    public RespDto<Long> save${domainSimpleName}(${domainSimpleName}Dto ${objName}) {
+        return RespDto.fail("保存用户失败");
+    }
+
+    @Override
+    public RespDto<${domainSimpleName}Dto> findById(Long id) {
+        return RespDto.fail("通过id查询失败");
+    }
+
+    @Override
+    public RespDto<Boolean> delete(Long id, Long operatorId) {
+        return RespDto.fail("删除失败");
+    }
+}

@@ -1,0 +1,68 @@
+package ${basePackage}.${objName}.controller;
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
+import ${basePackage}.${objName}.service.I${domainSimpleName}Service;
+import ${groupName}.common.RespDto;
+import ${basePackage}.${objName}.dto.${domainSimpleName}Dto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+* 提供接口
+*
+* @author ${author}
+* @create ${createDate}
+*/
+@RequestMapping("/${objName}/api/v1")
+@RestController
+public class ${domainSimpleName}Controller {
+    private static Logger logger = LoggerFactory.getLogger(${domainSimpleName}Controller.class);
+
+    @Autowired
+    I${domainSimpleName}Service ${objName}Service;
+
+    @RequestMapping("/findByConditionWithPage")
+    public RespDto<PageInfo<${domainSimpleName}Dto>> findByConditionWithPage(Integer pageNum, Integer pageSize, ${domainSimpleName}Dto ${objName}Dto) {
+        Preconditions.checkArgument(null != pageNum);
+        Preconditions.checkArgument(null != pageSize);
+        Preconditions.checkArgument(null != ${objName}Dto);
+        logger.info("findByConditionWithPage... pageNum: {}, pageSize: {}, ${domainSimpleName}Dto: {}",
+            new Object[]{pageNum, pageSize, JSON.toJSONString(${objName}Dto, true)});
+        RespDto<PageInfo<${domainSimpleName}Dto>> res = ${objName}Service.findByConditionWithPage(pageNum, pageSize, ${objName}Dto);
+        logger.debug("findByConditionWithPage...结果: {}", JSON.toJSONString(res, true));
+        return res;
+    }
+
+    @RequestMapping("/findByCondition")
+    public RespDto<List<${domainSimpleName}Dto>> findByCondition(${domainSimpleName}Dto ${objName}Dto) {
+        logger.info("findByCondition>>> ${objName}Dto: {}", JSON.toJSONString(${objName}Dto, true));
+        return ${objName}Service.findByCondition(${objName}Dto);
+    }
+
+    @RequestMapping(value="/save", method = RequestMethod.POST)
+    public RespDto<Long> save${domainSimpleName}(${domainSimpleName}Dto ${objName}Dto) {
+        logger.info("save${domainSimpleName}>>>, ${objName}Dto: {}", JSON.toJSONString(${objName}Dto, true));
+        return ${objName}Service.save${domainSimpleName}(${objName}Dto);
+    }
+
+    @RequestMapping(value="/findById")
+    public RespDto<${domainSimpleName}Dto> findById(Long id) {
+        Preconditions.checkArgument(id != null, "id不能为空");
+        logger.info("findById>>>, id: {}", id);
+        return ${objName}Service.findById(id);
+    }
+
+    @RequestMapping(value="/delete", method = RequestMethod.POST)
+    public RespDto<Boolean> delete(Long id, Long operatorId) {
+        logger.info("Delete>>>>, id: {}", id);
+        return ${objName}Service.delete(id, operatorId);
+    }
+}

@@ -1,0 +1,21 @@
+package ${basePackage}.${objName}.dto;
+
+/**
+* dto
+*
+* @author ${author}
+* @create ${createDate}
+*/
+public class ${domainSimpleName}Dto {
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+}

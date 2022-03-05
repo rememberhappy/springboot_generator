@@ -1,0 +1,67 @@
+<template>
+
+  <div id="main">
+    <el-form ref="editForm" :rules="rules" label-position="left" :model="obj" label-width="80px">
+    #foreach($field in $fieldList)
+      <el-form-item label="$field" prop="$field">
+        <el-input v-model="obj.$field" placeholder="请输入"></el-input>
+      </el-form-item>
+    #end
+      <el-form-item>
+        <el-button type="primary" @click="save">保存</el-button>
+        <el-button type="warning" @click="cancel">取消</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "edit",
+    data() {
+      return {
+        rules: {},
+        // obj: {}
+      }
+    },
+    props: {
+      obj: {
+        default() {
+          {
+          }
+        },
+        type: Object
+      }
+    },
+    methods: {
+      async save() {
+        let valid = await this.$refs['editForm'].validate();
+        console.log("valid", valid)
+        if (!valid) {
+          return false;
+        }
+
+        let res = await this.httpUtil.postByJson(`/${objName}/save`, this.obj);
+        console.log("创建成功")
+        if (res) {
+          this.$emit("saveDone", true)
+        } else {
+          this.$alert({
+            title: '警告',
+            type: 'warning',
+            message: '保存失败'
+          });
+          this.$emit("saveDone", false);
+        }
+      },
+      cancel() {
+        console.log("取消")
+        this.$emit("saveDone", false)
+      }
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>

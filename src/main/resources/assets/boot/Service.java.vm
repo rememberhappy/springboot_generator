@@ -1,0 +1,21 @@
+package ${servicePackage};
+
+import cc.wdcloud.base.BaseService;
+import ${daoPackage}.${daoName};
+import ${domainPackage}.${domainName};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * todo 写下关于本service 你的注释
+ *
+ * @author ${author}
+ * @version 1.0.0
+ * @createdAt ${createDate}
+ * @updatedAt ${createDate}
+ */
+@Service
+public class ${serviceName} extends BaseService<${domainName}> {
+    @Autowired
+    ${daoName} ${objName}Dao;
+}

@@ -1,0 +1,90 @@
+package ${basePackage}.${objName}.api;
+
+import com.github.pagehelper.PageInfo;
+import ${groupName}.common.RespDto;
+import ${basePackage}.${objName}.dto.${domainSimpleName}Dto;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+
+/**
+*  接口
+*
+* @author ${author}
+* @create ${createDate}
+*/
+@FeignClient(value = "${artifactId}-server", fallback = ${domainSimpleName}ServiceHystrix.class)
+public interface I${domainSimpleName}Agent {
+
+    /**
+     * 条件查询,返回分页信息
+     *
+     * @param pageNum  第几页，从1开始
+     * @param pageSize 每页展示多少
+     * @param ${objName}Dto  查询条件
+     * @return
+     * @author ${author}
+     * @date ${createDate}
+    */
+    @RequestMapping(value = "/${objName}/api/v1/findByConditionWithPage")
+    RespDto<PageInfo<${domainSimpleName}Dto>> findByConditionWithPage(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize, @RequestBody ${domainSimpleName}Dto ${objName}Dto);
+
+    /**
+     * 条件查询，查询全部
+     *
+     * @param ${objName}Dto 查询条件
+     * @return
+     * @author ${author}
+     * @date ${createDate}
+    */
+    @RequestMapping(value = "/${objName}/api/v1/findByCondition")
+    RespDto<List<${domainSimpleName}Dto>> findByCondition(@RequestBody ${domainSimpleName}Dto ${objName}Dto);
+
+    /**
+     * 保存（更新和新增）
+     *
+     * @param ${objName}
+     * @return 保存成功，返回数据库id，保存失败，返回失败信息
+     * @author ${author}
+     * @date ${createDate}
+     */
+    @RequestMapping(value = "/${objName}/api/v1/save", method = RequestMethod.POST)
+    RespDto<Long> save${domainSimpleName}(@RequestBody ${domainSimpleName}Dto ${objName});
+
+//    /**
+//     * 更新指定id的记录
+//     *
+//     * @param ${objName}
+//     * @return 保存成功返回true，否则返回false
+//     * @author ${author}
+//     * @date ${createDate}
+//     */
+//    @RequestMapping(value = "/${objName}/api/v1/update", method = RequestMethod.POST)
+//    RespDto<Boolean> updateById(@RequestBody ${domainSimpleName}Dto ${objName});
+
+
+    /**
+    * 获取详情
+    *
+    * @param id
+    * @return com.woao.common.RespDto<com.woao.tes.${objName}.domain.${domainSimpleName}>
+    * @author ${author}
+    * @date ${createDate}
+    */
+    @RequestMapping(value = "/${objName}/api/v1/findById")
+    RespDto<${domainSimpleName}Dto> findById(@RequestParam("id") Long id);
+
+    /**
+    * 删除，软删除，更新数据库删除标志
+    *
+    * @param id
+    * @return
+    * @author ${author}
+    * @date ${createDate}
+    */
+    @RequestMapping(value = "/${objName}/api/v1/delete", method = RequestMethod.POST)
+    RespDto<Boolean> delete(@RequestParam("id") Long id, @RequestParam("operatorId") Long operatorId);
+}

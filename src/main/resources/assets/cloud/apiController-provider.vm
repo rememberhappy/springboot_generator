@@ -1,0 +1,119 @@
+package ${basePackage}.${objName}.api;
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import ${groupName}.common.RespDto;
+import ${basePackage}.${objName}.api.I${domainSimpleName}Agent;
+import ${domainFullName};
+import ${basePackage}.${objName}.dto.${domainSimpleName}Dto;
+import ${basePackage}.${objName}.service.I${domainSimpleName}Service;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+* 提供接口
+*
+* @author ${author}
+* @create ${createDate}
+*/
+@RestController
+public class ${domainSimpleName}AgentController implements I${domainSimpleName}Agent {
+private static Logger logger = LoggerFactory.getLogger(${domainSimpleName}AgentController.class);
+
+    @Autowired
+    I${domainSimpleName}Service ${objName}Service;
+
+    @Override
+    public RespDto<PageInfo<${domainSimpleName}Dto>> findByConditionWithPage(Integer pageNum, Integer pageSize,@RequestBody ${domainSimpleName}Dto ${objName}Dto) {
+        logger.info("findByConditionWithPage... pageNum: {}, pageSize: {}, ${domainSimpleName}Dto: {}",
+        new Object[]{pageNum, pageSize, JSON.toJSONString(${objName}Dto, true)});
+        ${domainSimpleName} ${objName} = new ${domainSimpleName}();
+        BeanUtils.copyProperties(${objName}Dto, ${objName});
+        PageInfo<${domainSimpleName}Dto> res = new PageInfo<>();
+        PageInfo<${domainSimpleName}> pageInfo = ${objName}Service.findByConditionWithPage(pageNum, pageSize, ${objName});
+        if (null == pageInfo || CollectionUtils.isEmpty(pageInfo.getList())) {
+            logger.info("查询结果为空");
+##            res.setList(new ArrayList<>());
+            return RespDto.success(null);
+        }
+        res.setTotal(pageInfo.getTotal());
+        List<${domainSimpleName}Dto> dtoList = Lists.transform(pageInfo.getList(), new Function<${domainSimpleName}, ${domainSimpleName}Dto>() {
+            @Nullable
+            @Override
+            public ${domainSimpleName}Dto apply(@Nullable ${domainSimpleName} ${objName}) {
+                ${domainSimpleName}Dto dto = new ${domainSimpleName}Dto();
+                BeanUtils.copyProperties(${objName}, dto);
+                return dto;
+                }
+            });
+        res.setList(dtoList);
+        logger.debug("findByConditionWithPage...结果: {}", JSON.toJSONString(res, true));
+        return RespDto.success(res);
+    }
+
+    @Override
+    public RespDto<List<${domainSimpleName}Dto>> findByCondition(@RequestBody ${domainSimpleName}Dto ${objName}Dto) {
+         logger.info("findByCondition>>> ${objName}Dto: {}", JSON.toJSONString(${objName}Dto, true));
+         ${domainSimpleName} ${objName} = new ${domainSimpleName}();
+         BeanUtils.copyProperties(${objName}Dto, ${objName});
+         List<${domainSimpleName}> list = ${objName}Service.findByCondition(${objName});
+         List<${domainSimpleName}Dto> res = Lists.transform(list, new Function<${domainSimpleName}, ${domainSimpleName}Dto>() {
+              @Nullable
+              @Override
+              public ${domainSimpleName}Dto apply(@Nullable ${domainSimpleName} ${objName}) {
+                   ${domainSimpleName}Dto dto = new ${domainSimpleName}Dto();
+                   BeanUtils.copyProperties(${objName}, dto);
+                   return dto;
+              }
+         });
+         return RespDto.success(res);
+    }
+
+    @Override
+    public RespDto<Long> save${domainSimpleName}(@RequestBody ${domainSimpleName}Dto ${objName}Dto) {
+         logger.info("save${domainSimpleName}>>>, ${objName}Dto: {}", JSON.toJSONString(${objName}Dto, true));
+         ${domainSimpleName} ${objName} = new ${domainSimpleName}();
+         BeanUtils.copyProperties(${objName}Dto, ${objName});
+         Long id = ${objName}.getId();
+         //        新增
+         if (null == id) {
+              id = ${objName}Service.add(${objName});
+         } else {
+             ${objName}Service.updateById(${objName});
+         }
+         return RespDto.success(id);
+    }
+
+
+    @Override
+    public RespDto<${domainSimpleName}Dto> findById(Long id) {
+         Preconditions.checkArgument(id != null, "id不能为空");
+         logger.info("findById>>>, id: {}", id);
+         ${domainSimpleName} ${objName} = ${objName}Service.findById(id);
+         if (null == ${objName}) {
+              return RespDto.fail("查询无数据");
+         }
+         ${domainSimpleName}Dto dto = new ${domainSimpleName}Dto();
+         BeanUtils.copyProperties(${objName}, dto);
+         return RespDto.success(dto);
+    }
+
+    @Override
+    public RespDto<Boolean> delete(Long id, Long operatorId) {
+         logger.info("Delete>>>>, id: {}", id);
+         int num = ${objName}Service.deleteById(id, operatorId);
+         return RespDto.success(num == 1);
+    }
+}

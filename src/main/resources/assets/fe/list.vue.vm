@@ -1,0 +1,201 @@
+/*
+* Copyright (c) 2012, 2021, Wedon and/or its affiliates. All rights reserved.
+*
+*/
+
+<template>
+    <div class="wdn-panel">
+        <el-form :inline="true" ref="queryForm" :model="queryVo" :rules="queryRules" size="small">
+            <el-form-item label="姓名" prop="name">
+                <el-input v-model="queryVo.name" placeholder="请输入"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" plain @click="search()">查询</el-button>
+                <el-button type="default" plain @click="reset()">重置</el-button>
+            </el-form-item>
+            <el-form-item style="float: right">
+                <el-button type="primary" @click="toAdd()">添加</el-button>
+            </el-form-item>
+        </el-form>
+
+        <bg-table
+                :table-data="tableData"
+                @tableChange="handleTableChange"
+                border>
+            #foreach($field in $fieldList)
+                <el-table-column
+                        prop="$field"
+                        label="$field">
+                </el-table-column>
+            #end
+            <el-table-column
+                    fixed="right"
+                    label="操作"
+                    width="90">
+                <template v-slot="scope">
+                    <el-button type="text" size="small" @click="toEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="text" size="small" @click="toRemove(scope.$index, scope.row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </bg-table>
+
+        <!-- 编辑 -->
+        <el-dialog v-bind:title="obj.id ? '编辑': '添加'" v-model="editDialogShow" custom-class="wdn-modal-content el-dialog-input-300"
+                   :close-on-click-modal="false">
+            <edit @saveDone="handleSaveDone" :obj="obj"></edit>
+        </el-dialog>
+    </div>
+</template>
+<script>
+    import Edit from "./edit.vue3.vm";
+
+    export default {
+        name: '${objName}List',
+        components: {
+            Edit
+        },
+        data() {
+            return {
+                /**
+                 * 表格数据
+                 **/
+                tableData: {
+                    pageSize: 10,
+                    pageNum: 1,
+                },
+                /**
+                 * 查询参数校验规则
+                 **/
+                queryRules: {},
+                /**
+                 * 查询参数
+                 **/
+                queryVo: {},
+                /**
+                 * 修改对话框是否显示
+                 */
+                editDialogShow: false,
+
+                /**
+                 * 修改对话框数据
+                 */
+                obj: {},
+
+                /**
+                 * 修改对话框数据索引值
+                 */
+                objIndex: null,
+
+
+            }
+        },
+
+
+        methods: {
+            /**
+             * 编辑表单执行完成
+             */
+            handleSaveDone(args) {
+                this.editDialogShow = false;
+                console.log("event", args)
+                if (args == true) {
+                    this.findByCondition();
+                } else {
+                    console.log("失败了，什么都不做");
+                }
+            },
+
+            /**
+             * 表格变化时候执行  主要是pageNum和pageSize
+             */
+            handleTableChange(obj) {
+                this.tableData = obj;
+                console.log("change", obj)
+                this.findByCondition();
+            },
+            search() {
+                this.tableData.pageNum = 1;
+                this.findByCondition();
+            },
+
+            /**
+             * 重置查询表单
+             */
+            reset() {
+                this.$refs["queryForm"].resetFields();
+                this.tableData.pageNum = 1;
+                this.tableData.pageSize = 10;
+                this.findByCondition();
+            },
+
+            /**
+             * 查询
+             */
+            findByCondition: async function () {
+                let tableData = await this.httpUtil.postByJson(`/${artifactId}/v1/${objName}/findByCondition?pageNum=${this.tableData.pageNum}&pageSize=${this.tableData.pageSize}`,this.queryVo);
+                console.log("data: ", tableData);
+                if (tableData) {
+                    this.tableData = tableData;
+                }
+            },
+            /**
+             * 跳转到添加数据页面
+             */
+            toAdd() {
+                console.log("to add dialog")
+                this.editDialogShow = true;
+                this.obj = {};
+                this.objIndex = -1;
+            },
+            /**
+             * 唤起编辑对话框
+             */
+            toEdit(idx, row) {
+                console.log("edit：", row)
+                this.obj = JSON.parse(JSON.stringify(row));
+                this.objIndex = idx;
+                this.editDialogShow = true;
+            },
+            /**
+             * 删除数据
+             */
+            async toRemove(idx, row) {
+
+                this.$confirm('数据删除后无法找回, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(async () => {
+
+                    console.log("删除：", idx, row)
+                    let res = await this.httpUtil.postByForm(`/${artifactId}/v1/${objName}/delete?id=${row.id}`);
+                    if (res == true) {
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                        // 原来第几页还是从第几页开始
+                        await this.findByCondition();
+                    } else if (res == false) {
+                        console.log("删除失败");
+                        this.$message({
+                            type: 'error',
+                            message: '删除失败!'
+                        });
+                    }
+                }).catch(() => {
+                    //  取消状态
+                });
+            },
+        },
+        /**
+         * 页面初始化时候执行
+         **/
+        async created() {
+            console.log("created....")
+            await this.findByCondition();
+        }
+    }
+</script>
+<style scoped lang="scss" src="./css/list.scss">
+</style>

@@ -1,0 +1,73 @@
+/*
+* Copyright (c) 2012, 2021, Wedon and/or its affiliates. All rights reserved.
+*
+*/
+
+<template>
+  <div id="main">
+    <el-form ref="editForm" :rules="rules" :model="formObj" label-width="120px" size="small">
+
+      #foreach($field in $fieldList)
+        <el-form-item label="$field" prop="$field">
+          <el-input v-model="formObj.$field" placeholder="请输入"></el-input>
+        </el-form-item>
+      #end
+      <el-form-item class="modal-footer">
+        <el-button type="default" @click="cancel">取消</el-button>
+        <el-button type="primary" @click="save">保存</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "edit",
+    props: {
+      obj: {
+        type: Object,
+        default:()=>{}
+      }
+    },
+    data() {
+      return {
+        rules: {},
+      }
+    },
+    computed:{
+      formObj(){
+        return this.obj
+      }
+    },
+    methods: {
+      async save() {
+        let valid = await this.$refs['editForm'].validate();
+        console.log("valid", valid)
+        if (!valid) {
+          return false;
+        }
+        let res = await this.httpUtil.postByJson(`/${artifactId}/v1/${objName}/save`, this.formObj);
+        console.log("创建成功")
+        if (res) {
+          this.$emit("saveDone", true)
+        } else {
+          this.$alert({
+            title: '警告',
+            type: 'warning',
+            message: '保存失败'
+          });
+          this.$emit("saveDone", false);
+        }
+      },
+      cancel() {
+        console.log("取消")
+        this.$emit("saveDone", false)
+      }
+    },
+    async created() {
+    }
+  }
+</script>
+
+<style scoped lang="scss" src="./css/edit.scss">
+</style>

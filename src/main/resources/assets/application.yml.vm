@@ -1,0 +1,73 @@
+#app:
+#  id: exam-server
+#apollo:
+#  meta: http://service-apollo-config-server-test-alpha.devops.svc.k8s.bjo.wdcloud.cc:8080
+#  bootstrap:
+#    enabled: true
+#    eagerLoad:
+#      enabled: true
+#    namespaces: application.yml
+#  cluster: testing1
+
+server:
+  port: 80
+  servlet:
+    context-path: /${artifactId}/v1
+spring:
+  application:
+    name: ${artifactId}-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${url}?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8&useSSL=false&allowMultiQueries=true
+    username: ${username}
+    password: ${password}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: ${artifactId}HikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: select 1
+  jackson:
+    #    接口返回的数据的日期格式
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  #    客户端传递的日期格式
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+  #    基于feign的接口调用，会生成很多{serverName}.FeignClientSpecification类的bean，
+  main:
+    allow-bean-definition-overriding: true
+  redis:
+    database: 14
+    host: 192.168.9.225
+    port: 6379
+    password: Wdcloud998
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: 1000ms
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    #   eureka不注册进入服务中心
+    register-with-eureka: false
+  instance:
+#    instance-id: ${artifactId}-server
+    prefer-ip-address: true
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+swagger:
+  base:
+    package: ${group}.${artifactId}
+  api:
+    title: ${group}.${artifactId} 接口文档
+    version: 1.0
+    description: ${artifactId}

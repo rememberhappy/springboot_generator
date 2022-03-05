@@ -1,0 +1,370 @@
+package net.woaoo.skyline.club.agent;
+
+import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.PageInfo;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import net.bytebuddy.asm.Advice;
+import net.woaoo.common.RespDto;
+import net.woaoo.common.enums.DelFlagEnum;
+import net.woaoo.common.enums.DomainTypeEnum;
+import net.woaoo.common.enums.RoleTypeEnum;
+import net.woaoo.garden.schedule.enums.ScheduleStatsTypeEnum;
+import net.woaoo.garden.teamMember.api.ITeamMemberAgent;
+import net.woaoo.skyline.club.api.IClubAgent;
+import net.woaoo.skyline.club.domain.Club;
+import net.woaoo.skyline.club.dto.ClubDto;
+import net.woaoo.skyline.club.dto.JoinClubDto;
+import net.woaoo.skyline.club.enums.ClubStatusEnum;
+import net.woaoo.skyline.club.service.IClubService;
+import net.woaoo.skyline.clubManager.domain.ClubManager;
+import net.woaoo.skyline.clubManager.service.IClubManagerService;
+import net.woaoo.skyline.clubMember.domain.ClubMember;
+import net.woaoo.common.enums.ApplyStatusEnum;
+import net.woaoo.skyline.clubMember.service.IClubMemberService;
+import net.woaoo.skyline.division.domain.Division;
+import net.woaoo.skyline.division.service.IDivisionService;
+import net.woaoo.skyline.follow.domain.Follow;
+import net.woaoo.skyline.follow.service.IFollowService;
+import net.woaoo.skyline.statsBalance.domain.StatsBalance;
+import net.woaoo.skyline.statsBalance.dto.StatsBalanceDto;
+import net.woaoo.skyline.statsBalance.service.IStatsBalanceService;
+import net.woaoo.skyline.user.domain.User;
+import net.woaoo.skyline.user.service.IUserService;
+import net.woaoo.skyline.userProfile.domain.UserProfile;
+import net.woaoo.skyline.userProfile.service.IUserProfileService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+/**
+ * 提供接口
+ *
+ * @author auto-coder
+ * @create 2018-07-16 16:30
+ */
+@RestController
+public class ClubAgentController implements IClubAgent {
+    private static Logger logger = LoggerFactory.getLogger(ClubAgentController.class);
+
+    @Autowired
+    IClubService clubService;
+    @Autowired
+    IClubMemberService clubMemberService;
+    @Autowired
+    IDivisionService divisionService;
+    @Autowired
+    IClubManagerService clubManagerService;
+    @Autowired
+    IUserService userService;
+    @Autowired
+    IFollowService followService;
+
+    @Autowired
+    ITeamMemberAgent teamMemberAgent;
+
+    @Autowired
+    IUserProfileService userProfileService;
+
+    @Autowired
+    IStatsBalanceService statsBalanceService;
+
+
+    @Override
+    public RespDto<PageInfo<ClubDto>> findByConditionWithPage(Integer pageNum, Integer pageSize, @RequestBody ClubDto clubDto) {
+        logger.info("findByConditionWithPage... pageNum: {}, pageSize: {}, ClubDto: {}",
+                new Object[]{pageNum, pageSize, JSON.toJSONString(clubDto, true)});
+        Club club = new Club();
+        BeanUtils.copyProperties(clubDto, club);
+        PageInfo<ClubDto> res = new PageInfo<>();
+        PageInfo<Club> pageInfo = clubService.findByConditionWithPage(pageNum, pageSize, club);
+        if (null == pageInfo || CollectionUtils.isEmpty(pageInfo.getList())) {
+            logger.info("查询结果为空");
+            return RespDto.success(null);
+        }
+        res.setTotal(pageInfo.getTotal());
+        List<ClubDto> dtoList = Lists.transform(pageInfo.getList(), new Function<Club, ClubDto>() {
+            @Nullable
+            @Override
+            public ClubDto apply(@Nullable Club club) {
+                ClubDto dto = new ClubDto();
+                BeanUtils.copyProperties(club, dto);
+                return dto;
+            }
+        });
+        //获取球队成员map
+        List<Long> clubIds = pageInfo.getList().stream().map(Club::getId).collect(Collectors.toList());
+        List<Map<String, Object>> clubMemberCountMap = clubMemberService.findClubMemberCount(clubIds);
+        dtoList.forEach(clubDtoInfo -> {
+            //封装球队成员个数
+            if (CollectionUtils.isNotEmpty(clubMemberCountMap)) {
+                for (Map<String, Object> innerMap : clubMemberCountMap) {
+                    if (Long.valueOf(innerMap.get("club_id").toString()).equals(clubDtoInfo.getId())) {
+                        clubDtoInfo.setMemberCount(Integer.parseInt(innerMap.get("count").toString()));
+                    }
+                }
+            }
+        });
+        res.setList(dtoList);
+        logger.debug("findByConditionWithPage...结果: {}", JSON.toJSONString(res, true));
+        return RespDto.success(res);
+    }
+
+    @Override
+    public RespDto<List<ClubDto>> findByCondition(@RequestBody ClubDto clubDto) {
+        logger.info("findByCondition>>> clubDto: {}", JSON.toJSONString(clubDto, true));
+        Club club = new Club();
+        BeanUtils.copyProperties(clubDto, club);
+        List<Club> list = clubService.findByCondition(club);
+        List<ClubDto> res = Lists.transform(list, new Function<Club, ClubDto>() {
+            @Nullable
+            @Override
+            public ClubDto apply(@Nullable Club club) {
+                ClubDto dto = new ClubDto();
+                BeanUtils.copyProperties(club, dto);
+                return dto;
+            }
+        });
+        return RespDto.success(res);
+    }
+
+
+    /**
+     * 创建俱乐部，默认会创建该俱乐部信息，添加管理员信息，添加队长信息，添加粉丝一枚
+     *
+     * @param
+     * @return
+     * @auther zhangdj
+     * @date 2018/8/14 13:42
+     */
+    @Transactional(rollbackFor = Exception.class, timeout = 5000)
+    @Override
+    public RespDto<Long> saveClub(@RequestBody ClubDto clubDto) {
+        logger.info("saveClub>>>, clubDto: {}", JSON.toJSONString(clubDto, true));
+        Club club = new Club();
+        BeanUtils.copyProperties(clubDto, club);
+
+        if (clubDto.getLocationId() != null) {
+            Division division = divisionService.findById(clubDto.getLocationId());
+            if (null != division) {
+                club.setLocation(division.getFullName());
+                club.setLocationType(division.getType());
+            } else {
+                logger.warn("指定的位置不存在， locationId: {}", club.getLocationId());
+            }
+        }
+        Long id = club.getId();
+        Long userId = club.getCreateUserId();
+        //        新增
+        if (null == id) {
+            Preconditions.checkArgument(StringUtils.isNotEmpty(clubDto.getName()));
+            Preconditions.checkArgument(null != clubDto.getLocationId());
+            club.setUpdateUserId(club.getCreateUserId());
+            id = clubService.add(club);
+
+            User user = userService.findById(userId);
+            if (user == null) {
+                logger.warn("没有查到指定id的用户, id:{}", userId);
+                user = new User();
+            }
+
+//            创建俱乐部成员
+            ClubMember member = new ClubMember();
+            member.setIsDel(DelFlagEnum.NO.getCode());
+            member.setClubId(id);
+            member.setName(user.getName());
+            member.setHeadImgUrl(user.getHeadImgUrl());
+            //设置球员详细信息
+            UserProfile userProfile = userProfileService.findByUserId(userId);
+            if (null != userProfile) {
+                member.setLuckyNumber(userProfile.getUniformNumber());
+                member.setPosition(userProfile.getPosition());
+                member.setShoeSize(userProfile.getShoeSize());
+                member.setClothesSize(userProfile.getClothesSize());
+            }
+            member.setWeight(user.getWeight());
+            member.setHeight(user.getHeight());
+
+            member.setCreateUserId(userId);
+            member.setRoleType(RoleTypeEnum.PLAYER.getCode());
+            member.setApplyStatus(ApplyStatusEnum.PASS.getCode());
+            member.setUserId(userId);
+            member.setUpdateUserId(userId);
+            Long memberId = clubMemberService.add(member);
+            logger.info("添加球队队员成功， id:{}", memberId);
+
+//            创建球队管理者
+            ClubManager manager = new ClubManager();
+            manager.setIsDel(DelFlagEnum.NO.getCode());
+            manager.setClubId(id);
+            manager.setUserId(userId);
+            manager.setCreateUserId(userId);
+            manager.setUpdateUserId(userId);
+            long managerId = clubManagerService.add(manager);
+            logger.info("添加球队管理者成功，id: {}", managerId);
+
+            Follow follow = new Follow();
+            follow.setFollowerId(userId);
+            follow.setFollowType(DomainTypeEnum.CLUB.getCode());
+            follow.setFollowId(id);
+            follow.setCreateUserId(userId);
+            follow.setUpdateUserId(userId);
+            long followId = followService.add(follow);
+            logger.info("添加关注成功， id: {}", followId);
+
+            StatsBalance detailStats = new StatsBalance();
+            detailStats.setTargetId(id);
+            detailStats.setTargetType(DomainTypeEnum.CLUB.getCode());
+            detailStats.setStatsType(ScheduleStatsTypeEnum.DETAIL.getCode());
+            detailStats.setBalanceCount(0);
+            detailStats.setIsDel(DelFlagEnum.NO.getCode());
+            long num = statsBalanceService.add(detailStats);
+            if (num == 0) {
+                logger.warn("添加球队专业版余额数据与失败，clubId: {}", id);
+            }
+        } else {
+            club.setUpdateUserId(club.getCreateUserId());
+            club.setCreateUserId(null);
+            clubService.updateById(club);
+        }
+
+
+        return RespDto.success(id);
+    }
+
+
+    @Override
+    public RespDto<ClubDto> findById(Long id) {
+        Preconditions.checkArgument(id != null, "id不能为空");
+        logger.info("findById>>>, id: {}", id);
+        Club club = clubService.findById(id);
+        if (null == club) {
+            return RespDto.fail("查询无数据");
+        }
+        ClubDto dto = new ClubDto();
+        BeanUtils.copyProperties(club, dto);
+        return RespDto.success(dto);
+    }
+
+    @Override
+    public RespDto<Boolean> delete(Long id, Long operatorId) {
+        logger.info("Delete>>>>, id: {}", id);
+        int num = clubService.deleteById(id, operatorId);
+        return RespDto.success(num == 1);
+    }
+
+    @Override
+    public RespDto<PageInfo<JoinClubDto>> findJoinClub(Long userId, Integer pageNum, Integer pageSize) {
+        logger.info("findJoinClub... pageNum: {}, pageSize: {}, userId: {}",
+                new Object[]{pageNum, pageSize, userId});
+        PageInfo<JoinClubDto> res = new PageInfo<>();
+        PageInfo<Club> joinClub = clubService.findJoinClub(userId, pageNum, pageSize);
+        if (joinClub == null || CollectionUtils.isEmpty(joinClub.getList())) {
+            return RespDto.success(null);
+        }
+        BeanUtils.copyProperties(joinClub, res);
+        res.setTotal(joinClub.getTotal());
+        //获取球队成员map
+        List<Long> clubIds = joinClub.getList().stream().map(Club::getId).collect(Collectors.toList());
+        List<Map<String, Object>> clubMemberCountMap = clubMemberService.findClubMemberCount(clubIds);
+        List<JoinClubDto> dtoList = joinClub.getList().stream().map(club -> {
+            JoinClubDto dto = new JoinClubDto();
+            BeanUtils.copyProperties(club, dto);
+            //封装球队成员个数
+            if (CollectionUtils.isNotEmpty(clubMemberCountMap)) {
+                for (Map<String, Object> innerMap : clubMemberCountMap) {
+                    if (Long.valueOf(innerMap.get("club_id").toString()).equals(dto.getId())) {
+                        dto.setMemberCount(Integer.parseInt(innerMap.get("count").toString()));
+                    }
+                }
+            }
+            return dto;
+        }).collect(Collectors.toList());
+        res.setList(dtoList);
+
+        return RespDto.success(res);
+    }
+
+    @Override
+    public RespDto<PageInfo<ClubDto>> findManageClub(Long userId, Integer pageNum, Integer pageSize) {
+        PageInfo<Club> pageInfo = clubService.findManageClub(userId, pageNum, pageSize);
+        if (pageInfo.getTotal() == 0) {
+            return RespDto.success(new PageInfo<>(new ArrayList<>()));
+        }
+        //用于封装球队成员个数
+        List<Long> clubIds = pageInfo.getList().stream().map(Club::getId).collect(Collectors.toList());
+        List<Map<String, Object>> clubMemberCountMap = clubMemberService.findClubMemberCount(clubIds);
+
+        List<ClubDto> dtos = Lists.transform(pageInfo.getList(), new Function<Club, ClubDto>() {
+            @Nullable
+            @Override
+            public ClubDto apply(@Nullable Club club) {
+                ClubDto dto = new ClubDto();
+                BeanUtils.copyProperties(club, dto);
+                //封装球队成员个数
+                if (CollectionUtils.isNotEmpty(clubMemberCountMap)) {
+                    for (Map<String, Object> innerMap : clubMemberCountMap) {
+                        if (Long.valueOf(innerMap.get("club_id").toString()).equals(dto.getId())) {
+                            dto.setMemberCount(Integer.parseInt(innerMap.get("count").toString()));
+                        }
+                    }
+                }
+                return dto;
+            }
+        });
+        PageInfo<ClubDto> res = new PageInfo<>();
+        BeanUtils.copyProperties(pageInfo, res);
+        res.setTotal(pageInfo.getTotal());
+        res.setList(dtos);
+        return RespDto.success(res);
+    }
+
+    @Override
+    public RespDto<Boolean> dissolve(Long userId, Long clubId) {
+        Club club = clubService.findById(clubId);
+        if (null == club) {
+            logger.warn("俱乐部不存在，clubId: {}", clubId);
+            return RespDto.fail("俱乐部不存在");
+        }
+
+        if (!Objects.equals(club.getCreateUserId(), userId)) {
+            logger.warn("用户 {} 尝试解散球队 {}，非球队创建人，禁止解散。", new long[]{userId, clubId});
+            return RespDto.fail("不是球队创建人，不能解散球队");
+        }
+
+        club.setStatus(ClubStatusEnum.DISABLE.getCode());
+        club.setUpdateUserId(userId);
+        club.setUpdateTime(new Date());
+
+        int num = clubService.updateById(club);
+        return RespDto.success(1 == num);
+    }
+
+    @Override
+    public RespDto<List<ClubDto>> findByIds(@RequestBody List<Long> ids) {
+        Preconditions.checkArgument(CollectionUtils.isNotEmpty(ids), "ids不能为空");
+        logger.info("findByIds>>>, clubDto: {}", JSON.toJSONString(ids, true));
+        List<Club> clubList = clubService.findByIds(ids);
+        if (CollectionUtils.isEmpty(clubList)) {
+            return RespDto.fail("查询无数据");
+        }
+        List<ClubDto> collect = clubList.stream().map(club -> {
+            ClubDto clubDto = new ClubDto();
+            BeanUtils.copyProperties(club, clubDto);
+            return clubDto;
+        }).collect(Collectors.toList());
+        logger.debug("findByIds...结果: {}", JSON.toJSONString(collect, true));
+        return RespDto.success(collect);
+    }
+}

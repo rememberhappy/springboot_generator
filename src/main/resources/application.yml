@@ -1,0 +1,29 @@
+#app:
+#  id: wecoder-generator
+#apollo:
+#  meta: http://service-apollo-config-server-test-alpha.devops.svc.k8s.bjo.wdcloud.cc:8080
+#  bootstrap:
+#    enabled: true
+#    eagerLoad:
+#      enabled: true
+#    namespaces: application.yml
+#  cluster: testing1
+
+
+server:
+  port: 8002
+spring:
+  profiles:
+    active: local
+---
+spring:
+  profiles: local
+bugu:
+  path: d://code/wecoder-generator
+
+---
+spring:
+  profiles: server
+bugu:
+  path: /data
+#  path: d://code/wecoder-generator
