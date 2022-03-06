@@ -1,6 +1,6 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
-import cc.wdcloud.coder.domain.ProjectInfo;
+import cc.zdj.coder.domain.ProjectInfo;
 
 /**
  * 包工具类，为不同的类生成不同的包名称

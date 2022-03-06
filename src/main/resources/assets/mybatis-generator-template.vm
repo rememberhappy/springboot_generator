@@ -57,14 +57,14 @@
         <property name="endingDelimiter" value="`"/>
 
         <!-- 生成mysql带有分页的sql的插件  这个可以自己写，-->
-        <plugin type="cc.wdcloud.coder.generator.MysqlPaginationPlugin" />
+        <plugin type="cc.zdj.coder.generator.MysqlPaginationPlugin" />
         <!-- mybatis toString方法 -->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
         <!-- mybatis 序列化 -->
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
 
         <!-- 自定义的注释规则，继承 DefaultCommentGenerator 重写 一些方法 -->
-        <commentGenerator type="cc.wdcloud.coder.generator.NewbatisGenerator">
+        <commentGenerator type="cc.zdj.coder.generator.NewbatisGenerator">
             <!-- 是否去除自动生成日期的注释 true：是 ： false:否 -->
             <property name="suppressDate" value="true"/>
             <!-- 是否去除所有自动生成的注释 true：是 ： false:否 -->

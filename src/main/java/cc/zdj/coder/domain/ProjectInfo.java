@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.domain;
+package cc.zdj.coder.domain;
 
 import lombok.Data;
 
@@ -44,13 +44,13 @@ public class ProjectInfo {
     /**
      * 参数数据格式：
      * {
-     *   "group": "cc.wdcloud.wdn",
+     *   "group": "cc.xxx.wdn",
      *   "artifactId": "teaching",
-     *   "url": "jdbc:mysql://192.168.9.225:3307/wdn_teaching",
+     *   "url": "jdbc:mysql://192.168.9.225:3307/xxx",
      *   "username": "root",
-     *   "password": "Wdcloud998",
+     *   "password": "xxx",
      *   "databaseName": "hrss",
-     *   "author": "lei",
+     *   "author": "zhangdj",
      *   "vueVersion": 3,
      *   "tableDomainNodeList": [
      *     {

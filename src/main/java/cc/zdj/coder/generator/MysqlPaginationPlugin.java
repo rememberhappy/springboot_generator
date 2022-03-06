@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.generator;
+package cc.zdj.coder.generator;
 
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.GeneratedXmlFile;

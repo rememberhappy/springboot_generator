@@ -1,7 +1,7 @@
 #app:
 #  id: exam-server
 #apollo:
-#  meta: http://service-apollo-config-server-test-alpha.devops.svc.k8s.bjo.wdcloud.cc:8080
+#  meta: http://service-apollo-config-server-test-alpha.devops.svc.k8s.bjo.xxx.cc:8080
 #  bootstrap:
 #    enabled: true
 #    eagerLoad:
@@ -43,9 +43,9 @@ spring:
     allow-bean-definition-overriding: true
   redis:
     database: 14
-    host: 192.168.9.225
+    host: 192.168.9.xxx
     port: 6379
-    password: Wdcloud998
+    password: 123
     timeout: 3000
     lettuce:
       pool:

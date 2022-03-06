@@ -1,12 +1,12 @@
-package cc.wdcloud.coder.service;
+package cc.zdj.coder.service;
 
-import cc.wdcloud.coder.Config;
-import cc.wdcloud.coder.domain.ProjectInfo;
-import cc.wdcloud.coder.domain.TableDomainNode;
-import cc.wdcloud.coder.dto.DomainDto;
-import cc.wdcloud.coder.dto.MapperDto;
-import cc.wdcloud.coder.dto.MybatisGenDto;
-import cc.wdcloud.coder.util.*;
+import cc.zdj.coder.Config;
+import cc.zdj.coder.domain.ProjectInfo;
+import cc.zdj.coder.domain.TableDomainNode;
+import cc.zdj.coder.dto.DomainDto;
+import cc.zdj.coder.dto.MapperDto;
+import cc.zdj.coder.dto.MybatisGenDto;
+import cc.zdj.coder.util.*;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.io.IOUtils;
 import org.mybatis.generator.api.MyBatisGenerator;
@@ -25,9 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 代码生成的 service

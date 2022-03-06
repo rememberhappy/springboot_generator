@@ -1,7 +1,7 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
-import cc.wdcloud.coder.dto.DomainDto;
-import cc.wdcloud.coder.dto.MapperDto;
+import cc.zdj.coder.dto.DomainDto;
+import cc.zdj.coder.dto.MapperDto;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public class MapperUtil {
     }
 
     /**
-     * <select id="findByObject" parameterType="cc.wdcloud.hrss.exam.coursepracticequestion.domain.CoursePracticeQuestion" resultMap="BaseResultMap">
+     * <select id="findByObject" parameterType="cc.zdj.hrss.exam.coursepracticequestion.domain.CoursePracticeQuestion" resultMap="BaseResultMap">
      * select
      * <include refid="Base_Column_List" />
      * from course_practice_question
@@ -177,7 +177,7 @@ public class MapperUtil {
      * 从参数中获取sql信息
      *
      * @param content 指定格式的sql字符串。使用第三方生成的sql mapper.xml 文件中的sql转换来的
-     * @return cc.wdcloud.coder.dto.MapperDto
+     * @return cc.zdj.coder.dto.MapperDto
      * @Throws
      * @Author zhangdj
      * @date 2022/3/4 16:18

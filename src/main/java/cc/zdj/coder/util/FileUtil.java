@@ -1,6 +1,6 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
-import cc.wdcloud.coder.domain.ProjectInfo;
+import cc.zdj.coder.domain.ProjectInfo;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -15,7 +15,6 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ResourceUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -28,7 +27,8 @@ import java.util.Random;
 public class FileUtil {
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-    public static final String SEPARATOR = "/";
+    // win和Linux的文件分隔符不一样
+    public static final String SEPARATOR = File.separator;
 
     static ThreadLocal<String> targetHolder = new ThreadLocal<>();
 
