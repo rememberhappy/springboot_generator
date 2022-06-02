@@ -11,7 +11,7 @@ import java.util.List;
 public class ProjectInfo {
     /**
      * group和artifactId 是pom文件中的 坐标 信息，用来在maven库中找唯一的项目。
-     * 此处还用来指定包结构，生成的脚手架的包路径为：group值.artifactId值
+     * 此处还用来指定包结构，生成的脚手架的包路径为：group值.artifactId值。artifactId用于包结构的时候，会将-去掉，大小写不作处理
      */
     private String group;
     private String artifactId;

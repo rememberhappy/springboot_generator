@@ -12,7 +12,7 @@
     <properties resource="" url="" />
     -->
     <!--
-    生成mapper.xml，dao层和实体类的时候，需要连接数据库
+    生成mapper.xml，dao层和实体类的时候，需要连接数据库。两种方式实现
     1. 在MBG工作的时候，需要额外加载的依赖包
     location属性指明加载jar/zip包的全路径
     2. 也可以在pom中定义
@@ -75,6 +75,8 @@
                         userId="root"
                         password="Wdcloud998">
             <!-- 这里面可以设置property属性，每一个property属性都设置到配置的Driver上 -->
+            <!-- 为true可以获取表的备注 -->
+            <property name="useInformationSchema" value="true" />
         </jdbcConnection>
 
         <!--

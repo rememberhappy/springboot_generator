@@ -52,20 +52,13 @@ public class NewbatisGenerator extends DefaultCommentGenerator {
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         topLevelClass.addJavaDocLine("/**");
-        topLevelClass.addJavaDocLine(" * 这是MyBatis Generator自动生成的Model Class.");
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(" * 对应的数据表是 : ");
-        sb.append(introspectedTable.getFullyQualifiedTable());
-        topLevelClass.addJavaDocLine(sb.toString());
+        topLevelClass.addJavaDocLine(" * ");
 
         String tableRemarks = introspectedTable.getRemarks();
-        if (!StringUtils.isEmpty(tableRemarks)) {
-            sb.setLength(0);
-            sb.append(" * 数据表注释 : ");
-            sb.append(tableRemarks);
-            topLevelClass.addJavaDocLine(sb.toString());
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(introspectedTable.getFullyQualifiedTable());
+        sb.append(" * ").append(tableRemarks).append(" ");
+        topLevelClass.addJavaDocLine(sb.toString());
 
         sb.setLength(0);
         sb.append(" * @author ");

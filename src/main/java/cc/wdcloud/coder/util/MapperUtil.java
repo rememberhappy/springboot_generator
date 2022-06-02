@@ -152,7 +152,7 @@ public class MapperUtil {
     public static String getInsertSql(String content) {
         String res = getSqlByType("<insert id=\"insertSelective\"[\\s|\\S]*?</insert>", content);
         if (StringUtils.isNotEmpty(res)) {
-            return res.replace("insertSelective", "insert");
+            return "  " + res.replace("insertSelective", "insert").replaceAll("  ", "\t");
         }
         return null;
     }
@@ -160,7 +160,7 @@ public class MapperUtil {
     public static String getUpdateByIdSql(String content) {
         String res = getSqlByType("<update id=\"updateByPrimaryKeySelective\"[\\s|\\S]*?</update>", content);
         if (StringUtils.isNotEmpty(res)) {
-            return res.replace("updateByPrimaryKeySelective", "updateById");
+            return "  " + res.replace("updateByPrimaryKeySelective", "updateById").replaceAll("  ", "\t");
         }
         return null;
     }
@@ -168,7 +168,7 @@ public class MapperUtil {
     public static String getDeleteByIdSql(String content) {
         String res = getSqlByType("<delete([\\s|\\S]*?)</delete>", content);
         if (StringUtils.isNotEmpty(res)) {
-            return res.replace("deleteByPrimaryKey", "deleteById");
+            return "  " + res.replace("deleteByPrimaryKey", "deleteById").replaceAll("  ", "\t");
         }
         return null;
     }

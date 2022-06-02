@@ -151,7 +151,7 @@ public class CoderService {
         String content = IOUtils.toString(inputStream, "utf-8");
         logger.info("content: {}", content);
         inputStream.close();
-
+        // 获得实体类中的字段
         List<String> fieldList = DomainUtil.getFieldList(content);
 
         DomainDto domainDto = new DomainDto(projectInfo, mybatisGenDto);
@@ -161,6 +161,7 @@ public class CoderService {
         mapperDto.setFullDomainName(mybatisGenDto.getFullDomainName());
         mapperDto.setTableName(mybatisGenDto.getTableName());
 
+        // 生成两个mapper文件
         MapperUtil.generateXmlFile(mapperDto, domainDto);
 
         // 生成对应的dao文件

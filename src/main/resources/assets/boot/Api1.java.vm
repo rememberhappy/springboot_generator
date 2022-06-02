@@ -80,6 +80,14 @@ public class ${domainName}Controller {
 
     /**
      * 获取详情
+     * 不建议使用，在以下场景禁止使用
+     * 1 api接口，不管是否经过授权
+     *
+     * 以下场景谨慎使用：
+     * 1 内网环境；
+     * 2 k8s环境以eureka的形式提供调用
+     *
+     * 总之：不建议提供。 替换方案： findByUcode
      *
      * @param
      * @return
@@ -88,17 +96,33 @@ public class ${domainName}Controller {
      * @updatedAt ${createDate}
      */
     @Deprecated
-    @ApiOperation(value = "主键查询")
+    @ApiOperation(value = "主键查询， 不建议使用， 替换方案： findByUcode")
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
     public Resp<${domainName}> findById(Long id) {
-        Preconditions.checkArgument(id != null, "ID不能为空");
         ${domainName} ${objName} =${objName}Service.findById(id);
         return Resp.success(${objName});
     }
 
     /**
-     * 删除，软删除，更新数据库删除标志
+     * 通过code查找，用于对外暴露
      *
+     * @param
+     * @return
+     * @author ${author}
+     * @createdAt ${createDate}
+     * @updatedAt ${createDate}
+     */
+    @ApiOperation(value = "主键查询")
+    @RequestMapping(value = "/findByUcode", method = RequestMethod.GET)
+    public Resp<${domainName}> findByUcode(String ucode) {
+        ${domainName} ${objName} =${objName}Service.findByUcode(ucode);
+        return Resp.success(${objName});
+    }
+
+    /**
+     * 删除，软删除，更新数据库删除标志
+     * 所有删除操作， 只通过ucode执行
+     * 同时， 禁止批量删除。
      * @param
      * @return
      * @author ${author}
@@ -107,12 +131,10 @@ public class ${domainName}Controller {
      */
     @ApiOperation(value = "删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public Resp<Boolean> delete(Long id) {
-        Preconditions.checkArgument(id != null, "ID不能为空");
-        ${domainName} ${objName} = new ${domainName}();
-        ${objName}.setId(id);
-        ${objName}.setIsDel(DelEnum.NO.getCode());
-        int count = ${objName}Service.updateById(${objName});
+    public Resp<Boolean> delete(String ucode) {
+        Preconditions.checkArgument(ucode != null, "编号不能为空");
+        ${domainName} ${objName} =${objName}Service.findByUcode(ucode);
+        int count = ${objName}Service.delete(${objName});
         return Resp.success(count == 1);
     }
 }
