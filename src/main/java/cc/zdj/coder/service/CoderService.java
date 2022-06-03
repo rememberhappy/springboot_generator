@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +113,6 @@ public class CoderService {
      * 使用mybatis生成代码，官网提供。使用会生成 实体类，dao接口和对应的mapper.xml文件
      *
      * @param configPath mybatis-generator的配置文件路径
-     * @return void
      * @Author zhangdj
      * @date 2022/3/5 12:18
      */
@@ -135,8 +135,6 @@ public class CoderService {
      *
      * @param projectInfo   参数信息，用来获取表名和实体类名，坐标等信息
      * @param mybatisGenDto mybatis第三方工具的信息
-     * @return void
-     * @Throws
      * @Author zhangdj
      * @date 2022/3/5 12:19
      */
@@ -146,7 +144,7 @@ public class CoderService {
         String mapperPath = mybatisGenDto.getTargetProjectFolder() + "/mapper/" + mybatisGenDto.getDomainName() + "Mapper.xml";
         logger.info("mapper.xml路径为： {}", mapperPath);
         InputStream inputStream = new FileInputStream(mapperPath);
-        String content = IOUtils.toString(inputStream, "utf-8");
+        String content = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         logger.info("content: {}", content);
         inputStream.close();
         // 获得实体类中的字段
@@ -167,19 +165,23 @@ public class CoderService {
         System.out.println("daoPath:" + daoPath);
         FileUtil.generateFileFromVm("assets/boot/Dao.java.vm", daoPath, domainDto);
 
-        // 根据需要生成service， service.impl, controller等信息
+        // 生成 逻辑层类 文件，逻辑层接口由 pom 中引入的公共的BaseService中实现
         String servicePath = PackageUtil.getServiceFile(projectInfo, domainDto.getDomainName());
         FileUtil.generateFileFromVm("assets/boot/Service.java.vm", servicePath, domainDto);
 
+        // 生成 控制层类 文件
         String controllerPath = PackageUtil.getControllerFile(projectInfo, domainDto.getDomainName());
         FileUtil.generateFileFromVm("assets/boot/Api.java.vm", controllerPath, domainDto);
 
+        // 生成springBoot 启动类文件
         String applicationJavaPath = PackageUtil.getRootApplicationFile(projectInfo);
         FileUtil.generateFileFromVm("assets/Application.java.vm", applicationJavaPath, domainDto);
 
+        // 生成 yml 配置文件
         String ymlPath = PackageUtil.getYmlPath();
         FileUtil.generateFileFromVm("assets/application.yml.vm", ymlPath, projectInfo);
 
+        // 生成 pom 文件
         String pomPath = PackageUtil.getPomPath();
         FileUtil.generateFileFromVm("assets/pom.xml.vm", pomPath, projectInfo);
 
@@ -191,8 +193,6 @@ public class CoderService {
 //        Integer vueVersion = projectInfo.getVueVersion();
 //        if (null == vueVersion) {
 //            vueVersion = 3;
-//        } else {
-//            vueVersion = 2;
 //        }
 //
 //        String listPath = PackageUtil.getListPath(domainDto.getDomainName(), projectInfo.getArtifactId());
@@ -227,7 +227,7 @@ public class CoderService {
         // 删除生成的mapper.java文件
         String info = String.format("%s/%s/%sMapper", FileUtil.getTargetSourcePath(), mybatisGenDto.getDaoPackage().replaceAll("\\.", "/"), mybatisGenDto.getDomainName());
         boolean delete = new File(info + ".java").delete();
-        System.out.println("是否删除成功:" + delete);
+        logger.info("删除【第三方 生成的 mapper.xml和dao层的mapper.java】: {}", (delete ? "成功" : "失败"));
     }
 
     /**
@@ -247,6 +247,7 @@ public class CoderService {
         ZipUtils.toZip(FileUtil.getTargetFolder(), os, true);
         os.flush();
         os.close();
+        logger.info("打包下载的文件地址: {}", targetZip);
         return targetZip;
     }
 

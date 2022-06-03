@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/coder")
@@ -45,11 +46,10 @@ public class CoderController {
 
         // 打包文件，返回地址
         String zipPath = coderService.packageFile();
-        System.out.println("打包下载的文件地址:" + zipPath);
 
         // 处理下载
         response.setContentType("application/zip;charset=utf-8");
-        response.setHeader("Content-Disposition", "attachment;filename=" + new String((projectInfo.getArtifactId() + "-server.zip").getBytes(), "iso-8859-1"));
+        response.setHeader("Content-Disposition", "attachment;filename=" + new String((projectInfo.getArtifactId() + "-server.zip").getBytes(), StandardCharsets.ISO_8859_1));
         OutputStream os = response.getOutputStream();
         InputStream is = new BufferedInputStream(new FileInputStream(zipPath));
         byte[] buffer = new byte[1024];
@@ -59,10 +59,10 @@ public class CoderController {
         }
         os.close();
         is.close();
+        RootPathHolder.clean();
 
         // 删除本地生成的文件
         String targetFolder = FileUtil.getTargetFolder();
         FileUtil.deleteFile(new File(targetFolder).getParentFile());
-        RootPathHolder.clean();
     }
 }
