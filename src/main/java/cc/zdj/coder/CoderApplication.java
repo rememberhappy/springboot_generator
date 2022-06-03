@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 
 @SpringBootApplication
 @Configuration
-//@EnableApolloConfig
-//@EnableSwagger2
 @EnableConfigurationProperties
 public class CoderApplication {
     public static void main(String[] args) {

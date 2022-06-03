@@ -56,11 +56,15 @@
         <property name="endingDelimiter" value="`"/>
 
         <!-- 生成mysql带有分页的sql的插件  这个可以自己写，-->
-        <plugin type="cc.zdj.coder.generator.MysqlPaginationPlugin" />
+        <plugin type="cc.zdj.coder.generator.MysqlPaginationPlugin"/>
+        <!-- 自动生成lombok注解配置和根据数据库注释为实体添加注释, 需要自己编译文件才可以实现,具体见https://www.jianshu.com/p/58ee7e09fc3f -->
+        <plugin type="cc.zdj.coder.generator.LombokPlugin">
+            <property name="hasLombok" value="true"/>
+        </plugin>
         <!-- mybatis toString方法 -->
-        <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
         <!-- mybatis 序列化 -->
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
 
         <!-- 自定义的注释规则，继承 DefaultCommentGenerator 重写 一些方法 -->
         <commentGenerator type="cc.zdj.coder.generator.NewbatisGenerator">
@@ -71,12 +75,13 @@
         </commentGenerator>
 
         <!-- 必须要有的，使用这个配置链接数据库。 此文件有一个模板，在使用的时候，会复制此模板，对 数据库连接地址，用户名，密码重新赋值 -->
+        <!-- driverClas使用了上述配置的版本为 5.1.38 的mysql驱动 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://192.168.9.225:3307/wdn_learning"
                         userId="root"
                         password="Wdcloud998">
             <!-- 这里面可以设置property属性，每一个property属性都设置到配置的Driver上 -->
             <!-- 为true可以获取表的备注 -->
-            <property name="useInformationSchema" value="true" />
+            <property name="useInformationSchema" value="true"/>
         </jdbcConnection>
 
         <!--
@@ -101,7 +106,7 @@
         targetPackage：生成的类要放的包，真实的包受enableSubPackages属性控制；
         targetProject：目标项目，指定一个存在的目录下，生成的内容会放到指定目录中，如果目录不存在，MBG不会自动建目录
         -->
-        <javaModelGenerator targetPackage="cc.wdcloud.wdn.learning.contenttickinfo.domain"
+        <javaModelGenerator targetPackage="cc.zdj.wdn.learning.contenttickinfo.domain"
                             targetProject="/generator/1636454771739-321/learning-server/src/main/java">
             <!-- for MyBatis3/MyBatis3Simple
             自动为每一个生成的类创建一个构造方法，构造方法包含了所有的field；而不是使用setter；
@@ -147,7 +152,7 @@
             3，XMLMAPPER：会生成Mapper接口，接口完全依赖XML；
         注意，如果context是MyBatis3Simple：只支持ANNOTATEDMAPPER和XMLMAPPER
         -->
-        <javaClientGenerator targetPackage="cc.wdcloud.wdn.learning.contenttickinfo.dao" type="XMLMAPPER"
+        <javaClientGenerator targetPackage="cc.zdj.wdn.learning.contenttickinfo.dao" type="XMLMAPPER"
                              targetProject="/generator/1636454771739-321/learning-server/src/main/java">
             <!-- 在targetPackage的基础上，根据数据库的schema再生成一层package，最终生成的类放在这个package下，默认为false -->
             <property name="enableSubPackages" value="true"/>
@@ -262,23 +267,23 @@
             注意，一个table元素中可以有多个columnOverride元素哈~
             -->
             <!-- <columnOverride column="username"> -->
-                <!-- 使用property属性来指定列要生成的属性名称 -->
-                <!-- <property name="property" value="userName"/> -->
+            <!-- 使用property属性来指定列要生成的属性名称 -->
+            <!-- <property name="property" value="userName"/> -->
 
-                <!-- javaType用于指定生成的domain的属性类型，使用类型的全限定名 -->
-                <!-- <property name="javaType" value=""/> -->
+            <!-- javaType用于指定生成的domain的属性类型，使用类型的全限定名 -->
+            <!-- <property name="javaType" value=""/> -->
 
-                <!-- jdbcType用于指定该列的JDBC类型 -->
-                <!-- <property name="jdbcType" value=""/> -->
+            <!-- jdbcType用于指定该列的JDBC类型 -->
+            <!-- <property name="jdbcType" value=""/> -->
 
-                <!-- typeHandler 用于指定该列使用到的TypeHandler，如果要指定，配置类型处理器的全限定名
-                    注意，mybatis中，不会生成到mybatis-config.xml中的typeHandler
-                    只会生成类似：where id = #{id,jdbcType=BIGINT,typeHandler=com._520it.mybatis.MyTypeHandler}的参数描述
-                -->
-                <!-- <property name="jdbcType" value=""/> -->
+            <!-- typeHandler 用于指定该列使用到的TypeHandler，如果要指定，配置类型处理器的全限定名
+                注意，mybatis中，不会生成到mybatis-config.xml中的typeHandler
+                只会生成类似：where id = #{id,jdbcType=BIGINT,typeHandler=com._520it.mybatis.MyTypeHandler}的参数描述
+            -->
+            <!-- <property name="jdbcType" value=""/> -->
 
-                <!-- 参考table元素的delimitAllColumns配置，默认为false -->
-                <!-- <property name="delimitedColumnName" value=""/> -->
+            <!-- 参考table元素的delimitAllColumns配置，默认为false -->
+            <!-- <property name="delimitedColumnName" value=""/> -->
             <!-- </columnOverride> -->
 
             <!-- ignoreColumn设置一个MGB忽略的列，如果设置了改列，那么在生成的domain中，生成的SQL中，都不会有该列出现
