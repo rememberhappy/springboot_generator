@@ -130,8 +130,6 @@ public class MapperUtil {
             res = res.replace("ResultMapWithBLOBs", "BaseResultMap");
             res = res.replace("selectByPrimaryKey", "findByObject");
             res = res.replace("java.lang.Long", parameterType);
-            System.out.println("*************************");
-            System.out.println(res);
             return res;
         }
         return null;

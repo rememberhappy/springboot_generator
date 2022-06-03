@@ -80,10 +80,9 @@ public class CoderService {
             mybatisGenDto.setPath(path);
             // 脚手架生成的代码的存放路径
             mybatisGenDto.setTargetProjectFolder(targetFolder);
+            logger.info("生成Mybatis配置文件所需要的参数：{}", JSON.toJSONString(mybatisGenDto, true));
 
-            System.out.println(JSON.toJSONString(mybatisGenDto, true));
-
-            // 生成 mybatis的配置文件
+            // 生成 mybatis 的配置文件
             String configPath = createMybatisGenerateConfiguration(mybatisGenDto);
 
             // 生成mapper.xml，生成mapper.java和对应的domain。生成的方法是第三方的包中自定义的方法
@@ -162,7 +161,6 @@ public class CoderService {
 
         // 生成对应的dao文件
         String daoPath = PackageUtil.getDaoFile(projectInfo, domainDto.getDomainName());
-        System.out.println("daoPath:" + daoPath);
         FileUtil.generateFileFromVm("assets/boot/Dao.java.vm", daoPath, domainDto);
 
         // 生成 逻辑层类 文件，逻辑层接口由 pom 中引入的公共的BaseService中实现

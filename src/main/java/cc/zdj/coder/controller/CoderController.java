@@ -26,10 +26,8 @@ public class CoderController {
     /**
      * 脚手架代码生成接口
      *
-     * @param response
-     * @param projectInfo
-     * @return void
-     * @Throws
+     * @param response    响应zip文件
+     * @param projectInfo 请求参数
      * @Author zhangdj
      * @date 2022/3/3 10:46
      */
