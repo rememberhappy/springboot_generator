@@ -24,15 +24,38 @@ public class CoderController {
     CoderService coderService;
 
     /**
-     * 脚手架代码生成接口
+     * 脚手架代码生成接口，返回服务器上代码生成的路径
+     *
+     * @param projectInfo 请求参数
+     * @return java.lang.String 服务器上代码生成的路径
+     * @Author zhangdj
+     * @date 2022/3/3 10:46
+     */
+    @RequestMapping("/generate")
+    public String generateCode(@RequestBody ProjectInfo projectInfo) throws Exception {
+        // 检查参数信息
+        Preconditions.checkArgument(CollectionUtils.isNotEmpty(projectInfo.getTableDomainNodeList()), "数据库表信息不能为空");
+
+        // 线程中 存入当前线程的信息
+        ProjectInfoHolder.setProjectInfo(projectInfo);
+
+        // 生成代码文件
+        String generatePath = coderService.generate(projectInfo);
+
+        RootPathHolder.clean();
+        return generatePath;
+    }
+
+    /**
+     * 脚手架代码生成接口，返回ZIP文件包
      *
      * @param response    响应zip文件
      * @param projectInfo 请求参数
      * @Author zhangdj
      * @date 2022/3/3 10:46
      */
-    @RequestMapping("/generate")
-    public void generateCode(HttpServletResponse response, @RequestBody ProjectInfo projectInfo) throws Exception {
+    @RequestMapping("/generateZip")
+    public void generateCodeToZip(HttpServletResponse response, @RequestBody ProjectInfo projectInfo) throws Exception {
         // 检查参数信息
         Preconditions.checkArgument(CollectionUtils.isNotEmpty(projectInfo.getTableDomainNodeList()), "数据库表信息不能为空");
 

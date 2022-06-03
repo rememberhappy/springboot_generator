@@ -41,7 +41,7 @@ public class CoderService {
     @Autowired
     Config config;
 
-    public void generate(ProjectInfo projectInfo) throws Exception {
+    public String generate(ProjectInfo projectInfo) throws Exception {
         String path = config.getPath();
 
         // 文件工具类   获取脚手架生成的代码的存放路径
@@ -91,6 +91,7 @@ public class CoderService {
             // 根据第三方生成的文件内容进行修改。生成controller，service，dao，pom.xml，启动类等文件。创建工程文件，包含压缩文件
             createProjectFile(projectInfo, mybatisGenDto);
         }
+        return FileUtil.getTargetFolder();
     }
 
     /**

@@ -41,7 +41,7 @@ public class ProjectInfo {
      */
     private Integer vueVersion;
 
-    /**
+    /*
      * 参数数据格式：
      * {
      *   "group": "cc.xxx.wdn",
