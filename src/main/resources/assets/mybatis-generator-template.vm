@@ -65,10 +65,10 @@
         #*<!-- mybatis toString方法 -->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
         <!-- mybatis 序列化 -->
-        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />*#
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
 
         <!-- 自定义的注释规则，继承 DefaultCommentGenerator 重写 一些方法 -->
-        <commentGenerator type="cc.wdcloud.coder.generator.NewbatisGenerator">
+        <commentGenerator type="cc.zdj.coder.generator.NewbatisGenerator">
             <!-- 是否去除自动生成日期的注释 true：是 ： false:否 -->
             <property name="suppressDate" value="true"/>
             <!-- 是否去除所有自动生成的注释 true：是 ： false:否 -->
@@ -79,8 +79,6 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="${dbUrl}" userId="${username}"
                         password="${password}">
             <!-- 这里面可以设置property属性，每一个property属性都设置到配置的Driver上 -->
-            <!-- 为true可以获取表的备注 -->
-            <property name="useInformationSchema" value="true" />
         </jdbcConnection>
 
         <!--

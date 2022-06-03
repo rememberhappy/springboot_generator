@@ -1,6 +1,6 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
-import cc.wdcloud.coder.domain.ProjectInfo;
+import cc.zdj.coder.domain.ProjectInfo;
 
 /**
  * 线程中存入参数信息

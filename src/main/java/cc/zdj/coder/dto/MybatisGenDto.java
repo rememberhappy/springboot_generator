@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.dto;
+package cc.zdj.coder.dto;
 
 import lombok.Data;
 

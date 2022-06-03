@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
 import org.apache.commons.lang3.StringUtils;
 

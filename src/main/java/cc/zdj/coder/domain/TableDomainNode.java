@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.domain;
+package cc.zdj.coder.domain;
 
 import lombok.Data;
 

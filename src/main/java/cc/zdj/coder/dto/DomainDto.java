@@ -1,6 +1,6 @@
-package cc.wdcloud.coder.dto;
+package cc.zdj.coder.dto;
 
-import cc.wdcloud.coder.domain.ProjectInfo;
+import cc.zdj.coder.domain.ProjectInfo;
 import lombok.Data;
 
 import java.text.SimpleDateFormat;

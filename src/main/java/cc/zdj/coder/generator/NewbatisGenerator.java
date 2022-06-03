@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.generator;
+package cc.zdj.coder.generator;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;

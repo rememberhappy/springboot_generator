@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
 /**
  * 生成的 脚手架 代码存放的路径

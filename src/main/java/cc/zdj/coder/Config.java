@@ -1,7 +1,7 @@
-package cc.wdcloud.coder;
+package cc.zdj.coder;
 
-import cc.wdcloud.coder.util.FileUtil;
-import cc.wdcloud.coder.util.RootPathHolder;
+import cc.zdj.coder.util.FileUtil;
+import cc.zdj.coder.util.RootPathHolder;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

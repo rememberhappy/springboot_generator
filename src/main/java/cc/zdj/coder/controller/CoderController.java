@@ -1,10 +1,10 @@
-package cc.wdcloud.coder.controller;
+package cc.zdj.coder.controller;
 
-import cc.wdcloud.coder.domain.ProjectInfo;
-import cc.wdcloud.coder.service.CoderService;
-import cc.wdcloud.coder.util.FileUtil;
-import cc.wdcloud.coder.util.ProjectInfoHolder;
-import cc.wdcloud.coder.util.RootPathHolder;
+import cc.zdj.coder.domain.ProjectInfo;
+import cc.zdj.coder.service.CoderService;
+import cc.zdj.coder.util.FileUtil;
+import cc.zdj.coder.util.ProjectInfoHolder;
+import cc.zdj.coder.util.RootPathHolder;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,26 +43,26 @@ public class CoderController {
         // 生成代码文件
         coderService.generate(projectInfo);
 
-//        // 打包文件，返回地址
-//        String zipPath = coderService.packageFile();
-//        System.out.println("打包下载的文件地址:" + zipPath);
-//
-//        // 处理下载
-//        response.setContentType("application/zip;charset=utf-8");
-//        response.setHeader("Content-Disposition", "attachment;filename=" + new String((projectInfo.getArtifactId() + "-server.zip").getBytes(), "iso-8859-1"));
-//        OutputStream os = response.getOutputStream();
-//        InputStream is = new BufferedInputStream(new FileInputStream(zipPath));
-//        byte[] buffer = new byte[1024];
-//
-//        while (is.read(buffer) != -1) {
-//            os.write(buffer);
-//        }
-//        os.close();
-//        is.close();
-//
-//        // 删除本地生成的文件
-//        String targetFolder = FileUtil.getTargetFolder();
-//        FileUtil.deleteFile(new File(targetFolder).getParentFile());
+        // 打包文件，返回地址
+        String zipPath = coderService.packageFile();
+        System.out.println("打包下载的文件地址:" + zipPath);
+
+        // 处理下载
+        response.setContentType("application/zip;charset=utf-8");
+        response.setHeader("Content-Disposition", "attachment;filename=" + new String((projectInfo.getArtifactId() + "-server.zip").getBytes(), "iso-8859-1"));
+        OutputStream os = response.getOutputStream();
+        InputStream is = new BufferedInputStream(new FileInputStream(zipPath));
+        byte[] buffer = new byte[1024];
+
+        while (is.read(buffer) != -1) {
+            os.write(buffer);
+        }
+        os.close();
+        is.close();
+
+        // 删除本地生成的文件
+        String targetFolder = FileUtil.getTargetFolder();
+        FileUtil.deleteFile(new File(targetFolder).getParentFile());
         RootPathHolder.clean();
     }
 }

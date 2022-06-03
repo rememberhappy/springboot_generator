@@ -1,4 +1,4 @@
-package cc.wdcloud.coder.util;
+package cc.zdj.coder.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
