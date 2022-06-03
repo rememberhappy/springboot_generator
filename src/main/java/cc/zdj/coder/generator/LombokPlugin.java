@@ -24,6 +24,7 @@ public class LombokPlugin extends PluginAdapter {
 
     /**
      * 设置实体类 类注释
+     *
      * @param topLevelClass
      * @param introspectedTable
      * @return

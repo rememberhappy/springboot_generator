@@ -2,6 +2,8 @@ package cc.zdj.coder.util;
 
 import cc.zdj.coder.domain.ProjectInfo;
 
+import java.util.regex.Matcher;
+
 /**
  * 包工具类，为不同的类生成不同的包名称
  */
@@ -46,7 +48,7 @@ public class PackageUtil {
     }
 
     public static String getDaoFile(ProjectInfo projectInfo, String domainName) {
-        String fullName = String.format("%s/%s/%sDao", FileUtil.getTargetSourcePath(), getDaoPackage(projectInfo, domainName).replaceAll("\\.", "/"), domainName);
+        String fullName = String.format("%s%s%s%s%sDao", FileUtil.getTargetSourcePath(), FileUtil.SEPARATOR, getDaoPackage(projectInfo, domainName).replaceAll("\\.", Matcher.quoteReplacement(FileUtil.SEPARATOR)), FileUtil.SEPARATOR, domainName);
         return fullName + ".java";
     }
 
@@ -56,32 +58,32 @@ public class PackageUtil {
     }
 
     public static String getServiceFile(ProjectInfo projectInfo, String domainName) {
-        String fullName = String.format("%s/%s/%sService", FileUtil.getTargetSourcePath(), getServicePackage(projectInfo, domainName).replaceAll("\\.", "/"), domainName);
+        String fullName = String.format("%s%s%s%s%sService", FileUtil.getTargetSourcePath(), FileUtil.SEPARATOR, getServicePackage(projectInfo, domainName).replaceAll("\\.", Matcher.quoteReplacement(FileUtil.SEPARATOR)), FileUtil.SEPARATOR, domainName);
         return fullName + ".java";
     }
 
     public static String getControllerFile(ProjectInfo projectInfo, String domainName) {
-        String fullName = String.format("%s/%s/%sController", FileUtil.getTargetSourcePath(), getControllerPackage(projectInfo, domainName).replaceAll("\\.", "/"), domainName);
+        String fullName = String.format("%s%s%s%s%sController", FileUtil.getTargetSourcePath(), FileUtil.SEPARATOR, getControllerPackage(projectInfo, domainName).replaceAll("\\.", Matcher.quoteReplacement(FileUtil.SEPARATOR)), FileUtil.SEPARATOR, domainName);
         return fullName + ".java";
     }
 
     public static String getRootApplicationFile(ProjectInfo projectInfo) {
-        String fullName = String.format("%s/%s/Application", FileUtil.getTargetSourcePath(), getBasePackage(projectInfo).replaceAll("\\.", "/"));
+        String fullName = String.format("%s%s%s%sApplication", FileUtil.getTargetSourcePath(), FileUtil.SEPARATOR, getBasePackage(projectInfo).replaceAll("\\.", Matcher.quoteReplacement(FileUtil.SEPARATOR)), FileUtil.SEPARATOR);
         return fullName + ".java";
     }
 
     public static String getYmlPath() {
-        String path = String.format("%s/application", FileUtil.getTargetResourcesPath());
+        String path = String.format("%s%sapplication", FileUtil.getTargetResourcesPath(), FileUtil.SEPARATOR);
         return path + ".yml";
     }
 
     public static String getPomPath() {
-        String path = String.format("%s/pom", FileUtil.getTargetFolder());
+        String path = String.format("%s%spom", FileUtil.getTargetFolder(), FileUtil.SEPARATOR);
         return path + ".xml";
     }
 
     public static String getGitIgnorePath() {
-        return FileUtil.getTargetFolder() + "/.gitignore";
+        return FileUtil.getTargetFolder() + FileUtil.SEPARATOR + ".gitignore";
     }
 
     /**

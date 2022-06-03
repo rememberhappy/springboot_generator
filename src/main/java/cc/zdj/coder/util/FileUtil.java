@@ -20,6 +20,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 /**
  * 文件处理帮助类
@@ -39,6 +40,8 @@ public class FileUtil {
      * @param targetFile 目标文件位置，需要定位后缀
      */
     public static void generateFileFromVm(String vmPath, String targetFile, Object templateObj) throws IllegalAccessException, IOException {
+        // 处理不同系统之间的 文件分割符
+        vmPath.replaceAll("/", Matcher.quoteReplacement(FileUtil.SEPARATOR));
         VelocityEngine ve = new VelocityEngine();
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -88,6 +91,12 @@ public class FileUtil {
      */
     public static String getProjectRootPath() {
         String path = FileUtil.class.getClassLoader().getResource("").getPath();
+        // 处理在不同系统下 获取的路径，并进行转换，转换为和系统一致。【windows获取的路径：/D:/IntelliJ%20IDEA%202022.1/projects/springboot_generator/target/classes/ -> windows的路径分隔符应为 \ 】
+        if (path.contains("/")) {
+            path = path.replaceAll("/", Matcher.quoteReplacement(SEPARATOR));
+        } else {
+            path = path.replaceAll("\\\\", Matcher.quoteReplacement(SEPARATOR));
+        }
         if (path.endsWith(SEPARATOR)) {
             path = path.substring(0, path.length() - 1);
             String rootPath = path.substring(0, path.lastIndexOf(SEPARATOR));
@@ -101,7 +110,7 @@ public class FileUtil {
     }
 
     public static Boolean deleteMapper() {
-        String mapperDir = getSourcePath() + "/mapper";
+        String mapperDir = getSourcePath() + SEPARATOR + "mapper";
         return deleteFile(new File(mapperDir));
     }
 
@@ -130,22 +139,21 @@ public class FileUtil {
                     deleteFile(item);
                 }
             }
-            logger.info("要删除的目录路径为：{}", file.getPath());
             result = file.delete();
-            logger.info("删除结果： {}", result);
+            logger.info("要删除的目录路径为：{}，删除结果： {}", file.getPath(), result);
         }
         return result;
     }
 
     public static String getTargetResourcesPath() {
-        return String.format("%s%s", getTargetFolder(), "/src/main/resources");
+        return String.format("%s%s%s%s%s%s%s", getTargetFolder(), SEPARATOR, "src", SEPARATOR, "main", SEPARATOR, "resources");
     }
 
     /**
      * 获取java source路径
      */
     public static String getSourcePath() {
-        return String.format("%s%s", getProjectRootPath(), "/generator/src/main/java");
+        return String.format("%s%s%s%s%s%s%s%s%s", getProjectRootPath(), SEPARATOR, "generator", SEPARATOR, "src", SEPARATOR, "main", SEPARATOR, "java");
     }
 
     /**
@@ -153,7 +161,7 @@ public class FileUtil {
      * 代码生成指定的文件地址(配置信息中配置的目录地址)/generator/当前时间的毫秒数-1000以内的随机数/项目的坐标-server/src/main/java
      */
     public static String getTargetSourcePath() {
-        return String.format("%s%s", getTargetFolder(), "/src/main/java");
+        return String.format("%s%s%s%s%s%s%s", getTargetFolder(), SEPARATOR, "src", SEPARATOR, "main", SEPARATOR, "java");
     }
 
     /**
@@ -168,8 +176,8 @@ public class FileUtil {
         ProjectInfo projectInfo = ProjectInfoHolder.getProjectInfo();
         Preconditions.checkArgument(null != projectInfo);
         Preconditions.checkArgument(null != projectInfo.getArtifactId());
-        String path = String.format("%s/%s/%d-%d/%s-server", RootPathHolder.getRootPath(), "generator",
-                System.currentTimeMillis(), new Random().nextInt(1000), projectInfo.getArtifactId());
+        String path = String.format("%s%s%s%s%d-%d%s%s-server", RootPathHolder.getRootPath(), SEPARATOR, "generator", SEPARATOR,
+                System.currentTimeMillis(), new Random().nextInt(1000), SEPARATOR, projectInfo.getArtifactId());
         // 地址：代码生成指定的文件地址(配置信息中配置的目录地址)/generator/当前时间的毫秒数-1000以内的随机数/项目的坐标-server
         targetHolder.set(path);
         return path;
@@ -184,7 +192,7 @@ public class FileUtil {
     public static void createDir(String packageInfo) {
         String sourcePath = getTargetSourcePath();
         String res = sourcePath + "." + packageInfo;
-        res = res.replaceAll("\\.", "/");
+        res = res.replaceAll("\\.", SEPARATOR);
         File file = new File(res);
         if (!file.exists()) {
             file.mkdirs();
@@ -195,13 +203,13 @@ public class FileUtil {
         String sourcePath = getSourcePath();
         String res = String.format("%s.%s", sourcePath, packageInfo);
 
-        res = res.replaceAll("\\.", "/");
+        res = res.replaceAll("\\.", SEPARATOR);
         return res;
     }
 
 
     public static String getFilePath(String className, String suffix) {
-        String res = className.replaceAll("\\.", "/");
+        String res = className.replaceAll("\\.", SEPARATOR);
         return String.format("%s.%s", res, suffix);
     }
 

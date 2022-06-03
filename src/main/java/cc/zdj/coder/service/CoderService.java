@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * 代码生成的 service
@@ -104,7 +105,8 @@ public class CoderService {
      */
     public String createMybatisGenerateConfiguration(MybatisGenDto mybatisGenDto) throws IOException, IllegalAccessException {
         String rootPath = FileUtil.getProjectRootPath();
-        String targetPath = rootPath + (rootPath.endsWith(FileUtil.SEPARATOR) ? "" : FileUtil.SEPARATOR) + "src/main/resources/mybatis-generator-template.xml";
+        String generatorTempXmlPath = "src/main/resources/mybatis-generator-template.xml".replaceAll("/", Matcher.quoteReplacement(FileUtil.SEPARATOR));
+        String targetPath = rootPath + (rootPath.endsWith(FileUtil.SEPARATOR) ? "" : FileUtil.SEPARATOR) + generatorTempXmlPath;
         FileUtil.generateFileFromVm("assets/mybatis-generator-template.vm", targetPath, mybatisGenDto);
         return targetPath;
     }
@@ -226,7 +228,7 @@ public class CoderService {
         // 删除生成的mapper.java文件
         String info = String.format("%s/%s/%sMapper", FileUtil.getTargetSourcePath(), mybatisGenDto.getDaoPackage().replaceAll("\\.", "/"), mybatisGenDto.getDomainName());
         boolean delete = new File(info + ".java").delete();
-        logger.info("删除【第三方 生成的 mapper.xml和dao层的mapper.java】: {}", (delete ? "成功" : "失败"));
+        logger.info("删除【第三方 生成的 mapper.xml和dao层的mapper.java】: {}，删除路径为：{}", (delete ? "成功" : "失败"), info);
     }
 
     /**

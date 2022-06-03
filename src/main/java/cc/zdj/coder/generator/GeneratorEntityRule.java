@@ -1,6 +1,6 @@
 package cc.zdj.coder.generator;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.Field;
@@ -15,14 +15,14 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * mybatis generator 扩展类
+ * mybatis generator 扩展类，自定义的注释规则
  *
  * @author zhangdj
  * @version 1.0.0
  * @createdAt 2022/3/4 16:47
  * @updatedAt 2022/3/4 16:47
  */
-public class NewbatisGenerator extends DefaultCommentGenerator {
+public class GeneratorEntityRule extends DefaultCommentGenerator {
     private final Properties properties;
     // 系统信息
     private final Properties systemPro;
@@ -32,7 +32,7 @@ public class NewbatisGenerator extends DefaultCommentGenerator {
     // 当前日期字符串
     private final String currentDateStr;
 
-    public NewbatisGenerator() {
+    public GeneratorEntityRule() {
         super();
         properties = new Properties();
         systemPro = System.getProperties();
@@ -51,14 +51,16 @@ public class NewbatisGenerator extends DefaultCommentGenerator {
      */
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        // 设置一行备注数据
         topLevelClass.addJavaDocLine("/**");
-        topLevelClass.addJavaDocLine(" * ");
 
+        // 获取表注释
         String tableRemarks = introspectedTable.getRemarks();
         StringBuilder sb = new StringBuilder();
-        sb.append(introspectedTable.getFullyQualifiedTable());
-        sb.append(" * ").append(tableRemarks).append(" ");
+        // 获取表名  表备注
+        sb.append(" * ").append(introspectedTable.getFullyQualifiedTable()).append(" ").append(tableRemarks);
         topLevelClass.addJavaDocLine(sb.toString());
+        topLevelClass.addJavaDocLine(" * ");
 
         sb.setLength(0);
         sb.append(" * @author ");
@@ -80,12 +82,15 @@ public class NewbatisGenerator extends DefaultCommentGenerator {
     public void addFieldComment(Field field, IntrospectedTable introspectedTable,
                                 IntrospectedColumn introspectedColumn) {
         if (suppressAllComments) {
-            StringBuilder sb = new StringBuilder();
-            field.addJavaDocLine("/**");
-            sb.append(" * ");
-            sb.append(introspectedColumn.getRemarks());
-            field.addJavaDocLine(sb.toString().replace("\n", " "));
-            field.addJavaDocLine(" */");
+            String remarks = introspectedColumn.getRemarks();
+            if (StringUtils.isNotBlank(remarks)) {
+                StringBuilder sb = new StringBuilder();
+                field.addJavaDocLine("/**");
+                sb.append(" * ");
+                sb.append(remarks);
+                field.addJavaDocLine(sb.toString().replace("\n", " "));
+                field.addJavaDocLine(" */");
+            }
         } else {
             super.addFieldComment(field, introspectedTable, introspectedColumn);
         }

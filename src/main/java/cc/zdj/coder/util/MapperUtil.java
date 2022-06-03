@@ -204,13 +204,13 @@ public class MapperUtil {
      * @date 2022/3/4 16:18
      */
     public static void generateXmlFile(MapperDto template, DomainDto domainDto) throws IOException, IllegalAccessException {
-        File mapperDir = new File(String.format("%s/mapper", FileUtil.getTargetResourcesPath()));
+        File mapperDir = new File(String.format("%s%smapper", FileUtil.getTargetResourcesPath(), FileUtil.SEPARATOR));
         if (!mapperDir.exists()) {
             mapperDir.mkdirs();
         }
-        String targetBasePath = String.format("%s/%s/%sBaseMapper.xml", FileUtil.getTargetResourcesPath(), "mapper", domainDto.getDomainName());
+        String targetBasePath = String.format("%s%s%s%s%sBaseMapper.xml", FileUtil.getTargetResourcesPath(), FileUtil.SEPARATOR, "mapper", FileUtil.SEPARATOR, domainDto.getDomainName());
         FileUtil.generateFileFromVm("assets/mapper/baseMapper.vm", targetBasePath, template);
-        String targetExtPath = String.format("%s/%s/%sExtMapper.xml", FileUtil.getTargetResourcesPath(), "mapper", domainDto.getDomainName());
+        String targetExtPath = String.format("%s%s%s%s%sExtMapper.xml", FileUtil.getTargetResourcesPath(), FileUtil.SEPARATOR, "mapper", FileUtil.SEPARATOR, domainDto.getDomainName());
         FileUtil.generateFileFromVm("assets/mapper/extMapper.vm", targetExtPath, template);
     }
 }
