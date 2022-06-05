@@ -23,10 +23,8 @@ import java.util.Properties;
  * @updatedAt 2022/3/4 16:47
  */
 public class GeneratorEntityRule extends DefaultCommentGenerator {
-    private final Properties properties;
     // 系统信息
     private final Properties systemPro;
-    private final boolean suppressDate;
     // 定义一个是否使用修改后的模式的标识
     private final boolean suppressAllComments;
     // 当前日期字符串
@@ -34,9 +32,7 @@ public class GeneratorEntityRule extends DefaultCommentGenerator {
 
     public GeneratorEntityRule() {
         super();
-        properties = new Properties();
         systemPro = System.getProperties();
-        suppressDate = false;
         suppressAllComments = true;
         currentDateStr = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date());
     }
