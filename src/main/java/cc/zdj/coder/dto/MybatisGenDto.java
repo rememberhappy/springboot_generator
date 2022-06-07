@@ -12,7 +12,6 @@ public class MybatisGenDto {
     // 实体类的包全路径，mapper中使用
     private String fullDomainName;
 
-    private String mysqlJarPath;
     private String dbUrl;
     private String username;
     private String password;

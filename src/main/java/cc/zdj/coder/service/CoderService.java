@@ -75,7 +75,6 @@ public class CoderService {
             mybatisGenDto.setDomainName(domainName);
             // 生成 domain（实体类）层类全路径，mapper文件中使用
             mybatisGenDto.setFullDomainName(PackageUtil.getFullDomainName(projectInfo, domainName));
-//            mybatisGenDto.setMysqlJarPath(FileUtil.getRootPath() + "/src/main/resources/lib/mysql-connector-java-5.1.39.jar");
             // 生成 domain（实体类）层包路径
             mybatisGenDto.setDomainPackage(PackageUtil.getDomainPackage(projectInfo, domainName));
             mybatisGenDto.setPath(path);
@@ -106,7 +105,7 @@ public class CoderService {
     public String createMybatisGenerateConfiguration(MybatisGenDto mybatisGenDto) throws IOException, IllegalAccessException {
         String rootPath = FileUtil.getProjectRootPath();
         String generatorTempXmlPath = "src/main/resources/mybatis-generator-template.xml".replaceAll("/", Matcher.quoteReplacement(FileUtil.SEPARATOR));
-        String targetPath = rootPath + (rootPath.endsWith(FileUtil.SEPARATOR) ? "" : FileUtil.SEPARATOR) + generatorTempXmlPath;
+        String targetPath = rootPath + FileUtil.SEPARATOR + generatorTempXmlPath;
         FileUtil.generateFileFromVm("assets/mybatis-generator-template.vm", targetPath, mybatisGenDto);
         return targetPath;
     }

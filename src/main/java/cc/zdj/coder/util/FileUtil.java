@@ -98,15 +98,13 @@ public class FileUtil {
             path = path.replaceAll("\\\\", Matcher.quoteReplacement(SEPARATOR));
         }
         if (path.endsWith(SEPARATOR)) {
+            // 去掉路径的最后一个 分隔符。\E:\JetBrains\IntelliJ%20IDEA%202020.3.3\IdeaProjects\springboot_generator\target\classes\
             path = path.substring(0, path.length() - 1);
-            String rootPath = path.substring(0, path.lastIndexOf(SEPARATOR));
-            rootPath = rootPath.substring(0, rootPath.lastIndexOf(SEPARATOR));
-            return rootPath;
         }
-        if (path.startsWith(SEPARATOR)) {
-            path = path.substring(1);
-        }
-        return path;
+        // 去掉最后一层路径  \E:\JetBrains\IntelliJ%20IDEA%202020.3.3\IdeaProjects\springboot_generator\target
+        String rootPath = path.substring(0, path.lastIndexOf(SEPARATOR));
+        // 去掉最后一层路径  \E:\JetBrains\IntelliJ%20IDEA%202020.3.3\IdeaProjects\springboot_generator
+        return rootPath.substring(0, rootPath.lastIndexOf(SEPARATOR));
     }
 
     public static Boolean deleteMapper() {
