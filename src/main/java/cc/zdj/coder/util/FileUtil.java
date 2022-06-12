@@ -128,8 +128,8 @@ public class FileUtil {
             return result;
         }
         if (file.isFile() || file.listFiles() == null) {
-            logger.info("要删除的文件路径为： {}", file.getPath());
             result = file.delete();
+            logger.info("要删除的文件路径为： {}，删除结果： {}", file.getPath(), result);
         } else {
             File[] files = file.listFiles();
             if (!ArrayUtils.isEmpty(files)) {

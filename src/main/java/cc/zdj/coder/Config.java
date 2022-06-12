@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * 配置信息。获取脚手架生成的目录
+ * 配置信息。获取脚手架生成的目录。根据不同的环境获取不同的配置
  */
 @Component
 @Data
@@ -16,7 +16,7 @@ public class Config {
     @Value("${spring.profiles.active:local}")
     private String env;
 
-    @Value("${bugu.path}")
+    @Value("${generate.path:D://}")
     private String path;
 
     public String getPath() {

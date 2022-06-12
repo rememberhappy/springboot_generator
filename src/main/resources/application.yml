@@ -18,11 +18,9 @@ spring:
 ---
 spring:
   profiles: local
-bugu:
-  path: d://code/wecoder-generator
 
 ---
 spring:
   profiles: server
-bugu:
+generate:
   path: /data
