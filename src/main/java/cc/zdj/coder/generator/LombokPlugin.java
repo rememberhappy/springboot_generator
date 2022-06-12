@@ -61,25 +61,15 @@ public class LombokPlugin extends PluginAdapter {
         return true;
     }
 
-//    @Override
-//    public boolean clientGenerated(Interface anInterface, TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-//        //Mapper文件的注释
-//        anInterface.addJavaDocLine("/**");
-//        anInterface.addJavaDocLine(" * @author Sin");
-//        anInterface.addJavaDocLine(" * @date " + new SimpleDateFormat("yyyy/MM/dd/hh:mm").format(new Date()));
-//        anInterface.addJavaDocLine(" */");
-//        return true;
-//    }
-
     @Override
     public boolean modelSetterMethodGenerated(Method method, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
-        //不生成getter
+        // 不生成getter
         return false;
     }
 
     @Override
     public boolean modelGetterMethodGenerated(Method method, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
-        //不生成setter
+        // 不生成setter
         return false;
     }
 }
