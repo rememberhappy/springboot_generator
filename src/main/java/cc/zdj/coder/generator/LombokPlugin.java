@@ -56,6 +56,7 @@ public class LombokPlugin extends PluginAdapter {
 //        topLevelClass.addJavaDocLine(" */");
 
         // 实体类实现的接口
+        // SpringBoot项⽬中使⽤@ResponseBody或者@RestController⾃动的将对象转化成json字符串传递给前端（原理是默认使⽤jackson包进⾏的处理）。前端传参的时候会执行使用JSON的格式进行传参，原理一样。所以不是先序列化也能对 对象进行传输。
 //        topLevelClass.addSuperInterface(new FullyQualifiedJavaType("java.io.Serializable"));
         return true;
     }
