@@ -239,7 +239,6 @@ public class CoderService {
      * @date 2022/3/4 15:53
      */
     public String packageFile() throws IOException {
-
         // 打包工程文件
         String srcPath = new File(FileUtil.getTargetFolder()).getParent();
         String targetZip = String.format("%s/%s-server.zip", srcPath, ProjectInfoHolder.getProjectInfo().getArtifactId());

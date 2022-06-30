@@ -41,7 +41,7 @@ public class FileUtil {
      */
     public static void generateFileFromVm(String vmPath, String targetFile, Object templateObj) throws IllegalAccessException, IOException {
         // 处理不同系统之间的 文件分割符
-        vmPath.replaceAll("/", Matcher.quoteReplacement(FileUtil.SEPARATOR));
+        vmPath = vmPath.replaceAll("/", Matcher.quoteReplacement(FileUtil.SEPARATOR));
         VelocityEngine ve = new VelocityEngine();
         ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -181,7 +181,6 @@ public class FileUtil {
         return path;
     }
 
-
     /**
      * 创建指定包名所在的文件夹
      *
@@ -204,7 +203,6 @@ public class FileUtil {
         res = res.replaceAll("\\.", SEPARATOR);
         return res;
     }
-
 
     public static String getFilePath(String className, String suffix) {
         String res = className.replaceAll("\\.", SEPARATOR);
