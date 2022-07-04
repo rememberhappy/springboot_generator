@@ -85,7 +85,7 @@ public class CoderService {
             // 生成 mybatis 的配置文件
             String configPath = createMybatisGenerateConfiguration(mybatisGenDto);
 
-            // 生成mapper.xml，生成mapper.java和对应的domain。生成的方法是第三方的包中自定义的方法
+            // 生成mapper.xml，生成mapper.java和对应的domain（实体类）。生成的方法是第三方的包中自定义的方法
             generateByMybatisGenerator(configPath);
 
             // 根据第三方生成的文件内容进行修改。生成controller，service，dao，pom.xml，启动类等文件。创建工程文件，包含压缩文件
@@ -113,7 +113,7 @@ public class CoderService {
     /**
      * 使用mybatis生成代码，官网提供。使用会生成 实体类，dao接口和对应的mapper.xml文件
      *
-     * @param configPath mybatis-generator的配置文件路径
+     * @param configPath mybatis-generator的XML配置文件路径
      * @Author zhangdj
      * @date 2022/3/5 12:18
      */

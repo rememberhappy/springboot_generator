@@ -30,6 +30,12 @@ public class PackageUtil {
         return res.toLowerCase();
     }
 
+    // 生成 DTO 层包路径：group值.artifactId值.实体类名小写.dto
+    public static String getDtoPackage(ProjectInfo projectInfo, String domainName) {
+        String res = String.format("%s.%s.dto", getBasePackage(projectInfo), domainName.toLowerCase());
+        return res.toLowerCase();
+    }
+
     // 生成 domain（实体类）层类路径：group值.artifactId值.实体类名小写.domain.实体类名
     public static String getFullDomainName(ProjectInfo projectInfo, String domainName) {
         return String.format("%s.%s", getDomainPackage(projectInfo, domainName), domainName);
