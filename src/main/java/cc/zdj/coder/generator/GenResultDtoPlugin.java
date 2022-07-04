@@ -20,7 +20,7 @@ import java.util.*;
  * @createdAt 2022/6/30 21:09
  * @updatedAt 2022/6/30 21:09
  */
-public class GenQueryVoPlugin extends PluginAdapter {
+public class GenResultDtoPlugin extends PluginAdapter {
 
     @Override
     public boolean validate(List<String> list) {
@@ -37,7 +37,7 @@ public class GenQueryVoPlugin extends PluginAdapter {
         List<Field> fields = topLevelClass.getFields();
 
         String targetPackage = context.getJavaModelGeneratorConfiguration().getTargetPackage();
-        String queryVo = join(targetPackage.substring(0, targetPackage.lastIndexOf(".")), "vo");
+        String queryVo = join(targetPackage.substring(0, targetPackage.lastIndexOf(".")), "dto");
 
         Set<String> importSet = new HashSet<>();
         ArrayList<String> removerFieldList = new ArrayList<>();
@@ -48,7 +48,7 @@ public class GenQueryVoPlugin extends PluginAdapter {
         removerFieldList.add("updateTime");
         removerFieldList.add("createUserId");
         removerFieldList.add("updateUserId");
-        TopLevelClass root = new TopLevelClass(join(queryVo, queryVoName + "Vo"));
+        TopLevelClass root = new TopLevelClass(join(queryVo, queryVoName + "Dto"));
         for (Field field : fields) {
             String fieldName = field.getName();
             if (removerFieldList.contains(field.getName())) {
