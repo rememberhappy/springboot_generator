@@ -77,7 +77,6 @@ public class GenResultDtoPlugin extends PluginAdapter {
             root.addAnnotation(annotation);
         }
 
-
         String targetProject = context.getJavaClientGeneratorConfiguration().getTargetProject();
         GeneratedJavaFile gjf = new GeneratedJavaFile(
                 root,

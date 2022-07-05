@@ -1,7 +1,6 @@
 package cc.zdj.coder.generatorFreemarker;
 
 import com.baomidou.mybatisplus.generator.config.OutputFile;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- *
+ * 生成VO的重写类。使用第二种生成方式
  *
  * @author zhangdj
  * @version 1.0.0
