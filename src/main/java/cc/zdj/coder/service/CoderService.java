@@ -9,6 +9,7 @@ import cc.zdj.coder.dto.MybatisGenDto;
 import cc.zdj.coder.util.*;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.api.ProgressCallback;
 import org.mybatis.generator.api.VerboseProgressCallback;
@@ -43,6 +44,17 @@ public class CoderService {
     Config config;
 
     public String generate(ProjectInfo projectInfo) throws Exception {
+        String url = projectInfo.getUrl();
+        if (StringUtils.isBlank(url)) {
+            throw new Exception("数据库URL不能为空");
+        } else if (!url.contains("useSSL")) {
+            // 兼容数据库版本8
+            if (url.contains("?")) {
+                projectInfo.setUrl(url + "&useSSL=false");
+            } else {
+                projectInfo.setUrl(url + "?useSSL=false");
+            }
+        }
         String path = config.getPath();
 
         // 文件工具类   获取脚手架生成的代码的存放路径
