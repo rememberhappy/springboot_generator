@@ -8,6 +8,7 @@ import cc.zdj.coder.dto.MapperDto;
 import cc.zdj.coder.dto.MybatisGenDto;
 import cc.zdj.coder.util.*;
 import com.alibaba.fastjson.JSON;
+import com.sun.javafx.util.Utils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.MyBatisGenerator;
@@ -22,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.plugin2.util.SystemUtil;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -43,7 +46,7 @@ public class CoderService {
     @Autowired
     Config config;
 
-    public String generate(ProjectInfo projectInfo) throws Exception {
+    public String generate(ProjectInfo projectInfo, boolean isLocal) throws Exception {
         String url = projectInfo.getUrl();
         if (StringUtils.isBlank(url)) {
             throw new Exception("数据库URL不能为空");
@@ -68,6 +71,12 @@ public class CoderService {
             if (!file.mkdirs()) {
                 throw new Exception("生成文件目录出错");
             }
+        }
+
+        String localPath = FileUtil.getTargetFolder();
+        if (isLocal) {
+            // 如果是本地调用，打开本地生成的文件夹
+            openDirectory(localPath.substring(1));
         }
 
         MybatisGenDto mybatisGenDto;
@@ -103,7 +112,36 @@ public class CoderService {
             // 根据第三方生成的文件内容进行修改。生成controller，service，dao，pom.xml，启动类等文件。创建工程文件，包含压缩文件
             createProjectFile(projectInfo, mybatisGenDto);
         }
-        return FileUtil.getTargetFolder();
+        return localPath;
+    }
+
+    /**
+     * 根据传入的路径打开文件夹
+     *
+     * @param folder 要打开的目录
+     * @Author zhangdj
+     * @date 2022/7/19 14:46
+     */
+    public static void openDirectory(String folder) {
+        File file = new File(folder);
+        if (!file.exists()) {
+            return;
+        }
+        Runtime runtime = null;
+        try {
+            runtime = Runtime.getRuntime();
+            if (!Utils.isWindows()) {
+                runtime.exec("nautilus " + folder);
+            } else {
+                runtime.exec("cmd /c start explorer " + folder);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (null != runtime) {
+                runtime.runFinalization();
+            }
+        }
     }
 
     /**
@@ -180,6 +218,10 @@ public class CoderService {
         // 生成 逻辑层类 文件，逻辑层接口由 pom 中引入的公共的BaseService中实现
         String servicePath = PackageUtil.getServiceFile(projectInfo, domainDto.getDomainName());
         FileUtil.generateFileFromVm("assets/boot/Service.java.vm", servicePath, domainDto);
+
+        // 生成 转换成类 文件
+        String convertPath = PackageUtil.getConvertFile(projectInfo, domainDto.getDomainName());
+        FileUtil.generateFileFromVm("assets/boot/Convert.java.vm", convertPath, domainDto);
 
         // 生成 控制层类 文件
         String controllerPath = PackageUtil.getControllerFile(projectInfo, domainDto.getDomainName());

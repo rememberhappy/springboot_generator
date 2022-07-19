@@ -1,0 +1,42 @@
+package ${basePackage}.convert;
+
+import ${domainPackage}.${domainName};
+import ${basePackage}.${objName}.vo.${domainName}Vo;
+import org.springframework.beans.BeanUtils;
+
+public class ${domainName}Convert {
+
+    /**
+     * VO转实体类
+     *
+     * @param ${objName} 参数
+     * @return ${domainPackage}.${domainName} 返回类型
+     * @author ${author}
+     * @createdAt ${createDate}
+     */
+    public static ${domainName} domainToDto(${domainName}Vo ${objName}Vo) {
+        if (${objName}Vo == null) {
+            return null;
+        }
+        ${domainName} ${objName} = new ${domainName}();
+        BeanUtils.copyProperties(${objName}Vo, ${objName});
+        return ${objName};
+    }
+
+    /**
+     * 实体类转DTO
+     *
+     * @param ${objName} 参数
+     * @return ${basePackage}.${objName}.dto.${domainName}Dto 返回类型
+     * @author ${author}
+     * @createdAt ${createDate}
+     */
+    public static ${domainName}Dto domainToDto(${domainName} ${objName}) {
+        if (${objName} == null) {
+            return null;
+        }
+        ${domainName}Dto dto = new ${domainName}Dto();
+        BeanUtils.copyProperties(${objName}, dto);
+        return dto;
+    }
+}

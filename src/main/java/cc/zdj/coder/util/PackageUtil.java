@@ -9,13 +9,13 @@ import java.util.regex.Matcher;
  */
 public class PackageUtil {
 
-    // 根据参数生成包路径 group值.artifactId值
+    // 根据参数生成包路径 group值.artifactId值   todo
     public static String getBasePackage(ProjectInfo projectInfo) {
         String artifactId = projectInfo.getArtifactId();
         if (artifactId.contains("-")) {
             artifactId = artifactId.replaceAll("-", "");
         }
-        return String.format("%s.%s", projectInfo.getGroup(), artifactId);
+        return String.format("%s.%s", projectInfo.getGroup(), artifactId).toLowerCase();
     }
 
     // 生成 dao层包路径：group值.artifactId值.实体类名小写.dao
@@ -30,9 +30,9 @@ public class PackageUtil {
         return res.toLowerCase();
     }
 
-    // 生成 DTO 层包路径：group值.artifactId值.实体类名小写.dto
-    public static String getDtoPackage(ProjectInfo projectInfo, String domainName) {
-        String res = String.format("%s.%s.dto", getBasePackage(projectInfo), domainName.toLowerCase());
+    // 生成 转换层 层包路径：group值.artifactId值.实体类名小写.convert
+    public static String getConvertPackage(ProjectInfo projectInfo, String domainName) {
+        String res = String.format("%s.%s.convert", getBasePackage(projectInfo), domainName.toLowerCase());
         return res.toLowerCase();
     }
 
@@ -59,7 +59,12 @@ public class PackageUtil {
     }
 
     public static String getDomainFile(ProjectInfo projectInfo, String domainName) {
-        String fullName = String.format("%s.%s.%s", FileUtil.getTargetSourcePath(), getDomainPackage(projectInfo, domainName).replaceAll("\\.", "/"), domainName);
+        String fullName = String.format("%s%s%s%s%s", FileUtil.getTargetSourcePath(), FileUtil.SEPARATOR, getDomainPackage(projectInfo, domainName).replaceAll("\\.", Matcher.quoteReplacement(FileUtil.SEPARATOR)), FileUtil.SEPARATOR, domainName);
+        return fullName + ".java";
+    }
+
+    public static String getConvertFile(ProjectInfo projectInfo, String domainName) {
+        String fullName = String.format("%s%s%s%s%sConvert", FileUtil.getTargetSourcePath(), FileUtil.SEPARATOR, getConvertPackage(projectInfo, domainName).replaceAll("\\.", Matcher.quoteReplacement(FileUtil.SEPARATOR)), FileUtil.SEPARATOR, domainName);
         return fullName + ".java";
     }
 

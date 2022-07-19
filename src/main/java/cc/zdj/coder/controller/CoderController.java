@@ -51,7 +51,7 @@ public class CoderController {
         ProjectInfoHolder.setProjectInfo(projectInfo);
 
         // 生成代码文件
-        String generatePath = coderService.generate(projectInfo);
+        String generatePath = coderService.generate(projectInfo, true);
 
         RootPathHolder.clean();
         return generatePath;
@@ -74,7 +74,7 @@ public class CoderController {
         ProjectInfoHolder.setProjectInfo(projectInfo);
 
         // 生成代码文件
-        coderService.generate(projectInfo);
+        coderService.generate(projectInfo, false);
 
         // 打包文件，返回地址
         String zipPath = coderService.packageFile();
