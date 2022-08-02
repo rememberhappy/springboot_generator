@@ -51,6 +51,7 @@ public class GenResultDtoPlugin extends PluginAdapter {
         TopLevelClass root = new TopLevelClass(join(queryVo, queryVoName + "Dto"));
         for (Field field : fields) {
             String fieldName = field.getName();
+            // 排除指定字段
             if (removerFieldList.contains(field.getName())) {
                 continue;
             }
@@ -62,6 +63,10 @@ public class GenResultDtoPlugin extends PluginAdapter {
             String replace = field.getJavaDocLines().get(1).replace(" * ", "");
             Field fieldWrite = new Field(fieldName, fieldType);
             fieldWrite.addJavaDocLine("@ApiModelProperty(value = \"" + replace + "\")");
+            if (StringUtils.isNotBlank(fullyQualifiedName) && fullyQualifiedName.contains("java.util.Date")) {
+                importSet.add("com.alibaba.fastjson.annotation.JSONField");
+                fieldWrite.addJavaDocLine("@JSONField(format=\"yyyy-MM-dd HH:mm:ss\")");
+            }
             root.addField(fieldWrite);
         }
         // 导入的类

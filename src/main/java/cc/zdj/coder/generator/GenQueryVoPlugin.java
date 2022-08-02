@@ -1,5 +1,6 @@
 package cc.zdj.coder.generator;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -51,6 +52,7 @@ public class GenQueryVoPlugin extends PluginAdapter {
         TopLevelClass root = new TopLevelClass(join(queryVo, queryVoName + "Vo"));
         for (Field field : fields) {
             String fieldName = field.getName();
+            // 排除指定字段
             if (removerFieldList.contains(field.getName())) {
                 continue;
             }
@@ -62,6 +64,10 @@ public class GenQueryVoPlugin extends PluginAdapter {
             String replace = field.getJavaDocLines().get(1).replace(" * ", "");
             Field fieldWrite = new Field(fieldName, fieldType);
             fieldWrite.addJavaDocLine("@ApiModelProperty(value = \"" + replace + "\")");
+            if (StringUtils.isNotBlank(fullyQualifiedName) && fullyQualifiedName.contains("java.util.Date")) {
+                importSet.add("com.alibaba.fastjson.annotation.JSONField");
+                fieldWrite.addJavaDocLine("@JSONField(format=\"yyyy-MM-dd HH:mm:ss\")");
+            }
             root.addField(fieldWrite);
         }
         // 导入的类
