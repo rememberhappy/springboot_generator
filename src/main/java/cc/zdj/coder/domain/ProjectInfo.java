@@ -60,5 +60,21 @@ public class ProjectInfo {
      *   ]
      * }
      */
+//    {
+//        "group": "cc.wdcloud.hrss",
+//            "artifactId": "hrssplatformmarketing",
+//            "url": "jdbc:mysql://rm-2zex25uupxs6di2z2.mysql.rds.aliyuncs.com/platform_marketing_system_fat",
+//            "username": "fat",
+//            "password": "Mn5GfUyu5I",
+//            "databaseName": "hrss",
+//            "author": "zhangdj",
+//            "vueVersion": 3,
+//            "tableDomainNodeList": [
+//                {
+//                    "tableName": "physical_card_code_user_equity",
+//                        "domainName":"PhysicalCardCodeUserEquity"
+//                }
+//            ]
+//    }
 }
 

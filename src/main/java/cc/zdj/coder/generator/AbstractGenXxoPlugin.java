@@ -1,5 +1,6 @@
 package cc.zdj.coder.generator;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -42,7 +43,7 @@ public abstract class AbstractGenXxoPlugin extends PluginAdapter {
 
         String targetPackage = context.getJavaModelGeneratorConfiguration().getTargetPackage();
         String xxoType = getXXoType();
-        String xxoName = join(targetPackage.substring(0, targetPackage.lastIndexOf(".")), xxoType);
+        String xxoName = join(targetPackage.substring(0, targetPackage.lastIndexOf(".")), xxoType).toLowerCase();
 
         Set<String> importSet = new HashSet<>();
         ArrayList<String> removerFieldList = new ArrayList<>();
@@ -65,20 +66,27 @@ public abstract class AbstractGenXxoPlugin extends PluginAdapter {
             if (StringUtils.isNotBlank(fullyQualifiedName) && !fullyQualifiedName.contains("java.lang.Long")) {
                 importSet.add(fullyQualifiedName);
             }
-            String replace = field.getJavaDocLines().get(1).replace(" * ", "");
-            Field fieldWrite = new Field(fieldName, fieldType);
-            fieldWrite.addJavaDocLine("@ApiModelProperty(value = \"" + replace + "\")");
-            if (StringUtils.isNotBlank(fullyQualifiedName) && fullyQualifiedName.contains("java.util.Date")) {
-                importSet.add("com.alibaba.fastjson.annotation.JSONField");
-                fieldWrite.addJavaDocLine("@JSONField(format=\"yyyy-MM-dd HH:mm:ss\")");
+            List<String> javaDocLines = field.getJavaDocLines();
+            if (CollectionUtils.isNotEmpty(javaDocLines) && javaDocLines.size() > 2) {
+                String replace = javaDocLines.get(1).replace(" * ", "");
+                Field fieldWrite = new Field(fieldName, fieldType);
+                fieldWrite.addJavaDocLine("@ApiModelProperty(value = \"" + replace + "\")");
+                if (StringUtils.isNotBlank(fullyQualifiedName) && fullyQualifiedName.contains("java.util.Date")) {
+                    importSet.add("com.alibaba.fastjson.annotation.JSONField");
+                    fieldWrite.addJavaDocLine("@JSONField(format=\"yyyy-MM-dd HH:mm:ss\")");
+                }
+                root.addField(fieldWrite);
             }
-            root.addField(fieldWrite);
         }
         // 导入的类
         for (String importStr : importSet) {
             root.addImportedType(importStr);
         }
         root.addImportedType("io.swagger.annotations.ApiModelProperty");
+        root.addImportedType("lombok.AllArgsConstructor");
+        root.addImportedType("lombok.Builder");
+        root.addImportedType("lombok.Data");
+        root.addImportedType("lombok.NoArgsConstructor");
         root.addImportedType("java.util.Date");
         // 继承的类
         // root.setSuperClass(queryVoName);

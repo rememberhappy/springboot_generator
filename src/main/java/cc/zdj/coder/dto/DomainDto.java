@@ -35,6 +35,8 @@ public class DomainDto {
 
     // 实体类名首字母小写
     private String objName;
+    // 实体类名全小写
+    private String objPathName;
 
     // 注释中使用
     private String author;
@@ -44,6 +46,7 @@ public class DomainDto {
         this.basePackage = PackageUtil.getBasePackage(projectInfo);
         this.domainName = mybatisGenDto.getDomainName();
         this.objName = this.domainName.substring(0, 1).toLowerCase() + this.domainName.substring(1);
+        this.objPathName = this.domainName.toLowerCase();
         this.domainPackage = String.format("%s.%s.domain", this.basePackage, this.objName).toLowerCase();
         this.daoPackage = String.format("%s.%s.dao", this.basePackage, this.objName).toLowerCase();
         this.servicePackage = String.format("%s.%s.service", this.basePackage, this.objName).toLowerCase();
