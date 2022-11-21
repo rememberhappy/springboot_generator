@@ -23,9 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.plugin2.util.SystemUtil;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -58,6 +56,13 @@ public class CoderService {
                 projectInfo.setUrl(url + "?useSSL=false");
             }
         }
+        if (StringUtils.isBlank(projectInfo.getPassword())) {
+            throw new Exception("数据库密码不能为空");
+        } else if (projectInfo.getPassword().contains("&")) {
+            projectInfo.setPassword(projectInfo.getPassword().replaceAll("&", "&amp;"));
+        }
+        // 线程中 存入当前线程的信息
+        ProjectInfoHolder.setProjectInfo(projectInfo);
         String path = config.getPath();
 
         // 文件工具类   获取脚手架生成的代码的存放路径

@@ -47,9 +47,6 @@ public class CoderController {
         // 检查参数信息
         Preconditions.checkArgument(CollectionUtils.isNotEmpty(projectInfo.getTableDomainNodeList()), "数据库表信息不能为空");
 
-        // 线程中 存入当前线程的信息
-        ProjectInfoHolder.setProjectInfo(projectInfo);
-
         // 生成代码文件
         String generatePath = coderService.generate(projectInfo, true);
 
@@ -69,9 +66,6 @@ public class CoderController {
     public void generateCodeToZip(HttpServletResponse response, @RequestBody ProjectInfo projectInfo) throws Exception {
         // 检查参数信息
         Preconditions.checkArgument(CollectionUtils.isNotEmpty(projectInfo.getTableDomainNodeList()), "数据库表信息不能为空");
-
-        // 线程中 存入当前线程的信息
-        ProjectInfoHolder.setProjectInfo(projectInfo);
 
         // 生成代码文件
         coderService.generate(projectInfo, false);
