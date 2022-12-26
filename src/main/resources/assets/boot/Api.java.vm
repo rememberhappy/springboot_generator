@@ -1,11 +1,14 @@
 package ${controllerPackage};
 
-import cc.wdcloud.base.enums.DelEnum;
-import com.github.pagehelper.PageInfo;
-import com.google.common.base.Preconditions;
 import cc.wdcloud.base.Resp;
+import cc.wdcloud.base.enums.DelEnum;
+import cc.wdcloud.common.CommonInfoHolder;
 import ${domainPackage}.${domainName};
 import ${servicePackage}.${serviceName};
+import ${dtoPackage}.${dtoName};
+import ${voPackage}.${voName};
+import com.github.pagehelper.PageInfo;
+import com.google.common.base.Preconditions;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,46 +30,46 @@ import java.util.List;
 public class ${domainName}Controller {
 
     @Autowired
-    ${serviceName} ${objName}Service;
+    private ${serviceName} ${objName}Service;
 
     /**
      * 条件查询, 分页
      *
-     * @param
-     * @return
+     * @param pageNum  页数
+     * @param pageSize 条数
+     * @param vo       查询条件参数
+     * @return cc.wdcloud.base.Resp<com.github.pagehelper.PageInfo<${dtoPackage}.${dtoName}>>
      * @author ${author}
      * @createdAt ${createDate}
      * @updatedAt ${createDate}
      */
     @ApiOperation(value = "条件查询")
     @RequestMapping(value = "/findByCondition", method = {RequestMethod.GET, RequestMethod.POST})
-    public Resp<PageInfo<${domainName}>> findByCondition(@RequestParam(defaultValue = "1") Integer pageNum,
+    public Resp<PageInfo<${dtoName}>> findByCondition(@RequestParam(defaultValue = "1") Integer pageNum,
                                                             @RequestParam(defaultValue = "10") Integer pageSize,
-                                                            @RequestBody(required = false) ${domainName} ${objName}) {
-
-        PageInfo<${domainName}> pageInfo = ${objName}Service.findByConditionWithPage(pageNum, pageSize, ${objName});
+                                                            @RequestBody(required = false) ${voName} vo) {
+        PageInfo<${dtoName}> pageInfo = ${objName}Service.findList(pageNum, pageSize, CommonInfoHolder.getSaasId(), CommonInfoHolder.getBranchId(), vo);
         return Resp.success(pageInfo);
     }
 
     /**
      * 保存
      *
-     * @param
-     * @return
+     * @param vo 修改参数
+     * @return cc.wdcloud.base.Resp<java.lang.Long> 操作数据的ID
      * @author ${author}
      * @createdAt ${createDate}
      * @updatedAt ${createDate}
      */
     @ApiOperation(value = "保存和更新")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public Resp<Long> save(@RequestBody ${domainName} ${objName}) {
-        Long ${objName}Id = ${objName}.getId();
+    public Resp<Long> save(@RequestBody ${voName} vo) {
+        Long ${objName}Id = vo.getId();
+        Long userId = CommonInfoHolder.getUserId();
         if (null == ${objName}Id) {
-                ${objName}Service.insert(${objName});
-                ${objName}Id = ${objName}.getId();
-
+            ${objName}Id = ${objName}Service.save(vo, CommonInfoHolder.getSaasId(), CommonInfoHolder.getBranchId(), userId);
         } else {
-                ${objName}Service.updateById(${objName});
+            ${objName}Service.update(vo, userId);
         }
         return Resp.success(${objName}Id);
     }
@@ -74,8 +77,8 @@ public class ${domainName}Controller {
     /**
      * 获取详情
      *
-     * @param
-     * @return
+     * @param id 参数
+     * @return cc.wdcloud.base.Resp<${domainPackage}.${domainName}> 详情信息
      * @author ${author}
      * @createdAt ${createDate}
      * @updatedAt ${createDate}
@@ -83,24 +86,24 @@ public class ${domainName}Controller {
     @Deprecated
     @ApiOperation(value = "主键查询")
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
-    public Resp<${domainName}> findById(@RequestParam Long id) {
+    public Resp<${domainName}> findById(@RequestParam("id") Long id) {
         Preconditions.checkArgument(id != null, "ID不能为空");
-        ${domainName} ${objName} =${objName}Service.findById(id);
+        ${domainName} ${objName} = ${objName}Service.findById(id);
         return Resp.success(${objName});
     }
 
     /**
      * 删除，软删除，更新数据库删除标志
      *
-     * @param
-     * @return
+     * @param id 参数
+     * @return cc.wdcloud.base.Resp<java.lang.Boolean> 是否删除成功
      * @author ${author}
      * @createdAt ${createDate}
      * @updatedAt ${createDate}
      */
     @ApiOperation(value = "删除")
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public Resp<Boolean> delete(@RequestParam Long id) {
+    public Resp<Boolean> delete(@RequestParam("id") Long id) {
         Preconditions.checkArgument(id != null, "ID不能为空");
         ${domainName} ${objName} = new ${domainName}();
         ${objName}.setId(id);

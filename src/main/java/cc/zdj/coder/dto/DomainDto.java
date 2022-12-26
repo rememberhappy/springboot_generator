@@ -22,6 +22,9 @@ public class DomainDto {
     private String daoName;
     private String serviceName;
     private String controllerName;
+    private String voName;
+    private String dtoName;
+    private String convertName;
 
     // 基础包名称。group值.artifactId值
     private String basePackage;
@@ -31,6 +34,9 @@ public class DomainDto {
     private String domainPackage;
     private String servicePackage;
     private String controllerPackage;
+    private String voPackage;
+    private String dtoPackage;
+    private String convertPackage;
 //    private String mapperDri;
 
     // 实体类名首字母小写
@@ -45,12 +51,18 @@ public class DomainDto {
     public DomainDto(ProjectInfo projectInfo, MybatisGenDto mybatisGenDto) {
         this.basePackage = PackageUtil.getBasePackage(projectInfo);
         this.domainName = mybatisGenDto.getDomainName();
+        this.voName = mybatisGenDto.getDomainName() + "Vo";
+        this.dtoName = mybatisGenDto.getDomainName() + "Dto";
+        this.convertName = mybatisGenDto.getDomainName() + "Convert";
         this.objName = this.domainName.substring(0, 1).toLowerCase() + this.domainName.substring(1);
         this.objPathName = this.domainName.toLowerCase();
         this.domainPackage = String.format("%s.%s.domain", this.basePackage, this.objName).toLowerCase();
         this.daoPackage = String.format("%s.%s.dao", this.basePackage, this.objName).toLowerCase();
         this.servicePackage = String.format("%s.%s.service", this.basePackage, this.objName).toLowerCase();
         this.controllerPackage = String.format("%s.%s.controller", this.basePackage, this.objName).toLowerCase();
+        this.voPackage = String.format("%s.%s.vo", this.basePackage, this.objName).toLowerCase();
+        this.dtoPackage = String.format("%s.%s.dto", this.basePackage, this.objName).toLowerCase();
+        this.convertPackage = String.format("%s.%s.convert", this.basePackage, this.objName).toLowerCase();
 
         // 实体类全路径
         this.fullDomainName = mybatisGenDto.getFullDomainName();

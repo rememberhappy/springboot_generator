@@ -1,10 +1,24 @@
 package ${servicePackage};
 
 import cc.wdcloud.base.BaseService;
+import ${convertPackage}.${convertName};
 import ${daoPackage}.${daoName};
 import ${domainPackage}.${domainName};
+import ${dtoPackage}.${dtoName};
+import ${voPackage}.${voName};
+import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
+import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * todo 写下关于本service 你的注释
@@ -14,8 +28,99 @@ import org.springframework.stereotype.Service;
  * @createdAt ${createDate}
  * @updatedAt ${createDate}
  */
+@Slf4j
 @Service
 public class ${serviceName} extends BaseService<${domainName}> {
     @Autowired
-    ${daoName} ${objName}Dao;
+    private ${daoName} ${objName}Dao;
+
+    /**
+     * 列表分页查询
+     *
+     * @param pageNum  页数
+     * @param pageSize 条数
+     * @param saasId   租户ID
+     * @param branchId 机构ID
+     * @param vo       条件信息
+     * @return ${dtoPackage}.${dtoName} 返回类型
+     * @author ${author}
+     * @createdAt ${createDate}
+     * @updatedAt ${createDate}
+     */
+    public PageInfo<${dtoName}> findList(Integer pageNum, Integer pageSize, Long saasId, Long branchId, ${voName} vo) {
+        log.debug("findList   >>>   vo：{}，pageNum：{}，pageSizes：{}，aasId：{}，branchId：{}", JSON.toJSONString(vo, true), pageNum, pageSize, saasId, branchId);        ${domainName} ${objName}Query = new ${domainName}();
+        if (vo != null) {
+            // TODO 逻辑处理
+        }
+        ${objName}Query.setSaasId(saasId);
+        ${objName}Query.setBranchId(branchId);
+        PageInfo<${domainName}> ${objName}PageInfo = findByConditionWithPage(pageNum, pageSize, ${objName}Query);
+        PageInfo<${dtoName}> resultPageInfo = new PageInfo<>();
+        BeanUtils.copyProperties(${objName}PageInfo, resultPageInfo);
+        List<${domainName}> list = ${objName}PageInfo.getList();
+        if (CollectionUtils.isNotEmpty(list)) {
+            List<${dtoName}> collect = list.stream().map(item -> {
+                ${dtoName} dto = new ${dtoName}();
+                BeanUtils.copyProperties(item, dto);
+                // TODO 其他字段逻辑
+                return dto;
+            }).collect(Collectors.toList());
+            resultPageInfo.setList(collect);
+        } else {
+            resultPageInfo.setList(Collections.emptyList());
+        }
+        return resultPageInfo;
+    }
+
+    /**
+     * 新增数据
+     *
+     * @param vo       新增薪资
+     * @param saasId   租户ID
+     * @param branchId 机构ID
+     * @param userId   操作用户
+     * @return cc.wdcloud.base.Resp<java.lang.Long> 返回类型
+     * @author ${author}
+     * @createdAt ${createDate}
+     * @updatedAt ${createDate}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Long save(${voName} vo, Long saasId, Long branchId, Long userId) {
+        log.debug("save   >>>   vo：{}", JSON.toJSONString(vo, true));
+        Date date = new Date();
+        ${domainName} ${objName} = ${convertName}.voToDomain(vo, userId, date);
+        // 校验数据
+        checkData(vo, ${objName});
+        // 新增数据的时候默认初始值
+        ${objName}.setCreateUserId(userId);
+        ${objName}.setCreateTime(date);
+        ${objName}.setBranchId(branchId);
+        ${objName}.setSaasId(saasId);
+        this.insert(${objName});
+        return ${objName}.getId();
+    }
+
+    /**
+     * 修改数据
+     *
+     * @param vo     修改信息
+     * @param userId 操作用户
+     * @author ${author}
+     * @createdAt ${createDate}
+     * @updatedAt ${createDate}
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void update(${voName} vo, Long userId) {
+        log.debug("update   >>>   vo：{}", JSON.toJSONString(vo, true));
+        Date date = new Date();
+        ${domainName} ${objName} = ${convertName}.voToDomain(vo, userId, date);
+        // 校验证书数据
+        checkData(vo, ${objName});
+        this.updateById(${objName});
+    }
+
+    // 校验数据
+    private void checkData(${voName} vo, ${domainName} ${objName}) {
+        // TODO 业务参数校验
+    }
 }

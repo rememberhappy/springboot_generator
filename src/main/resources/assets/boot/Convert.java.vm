@@ -5,39 +5,83 @@ import ${basePackage}.${objPathName}.dto.${domainName}Dto;
 import ${basePackage}.${objPathName}.vo.${domainName}Vo;
 import org.springframework.beans.BeanUtils;
 
+import java.util.Date;
+
+/**
+ * 类型转换
+ *
+ * @author ${author}
+ * @version 1.0.0
+ * @createdAt ${createDate}
+ * @updatedAt ${createDate}
+ */
 public class ${domainName}Convert {
 
     /**
      * VO转实体类
      *
-     * @param ${objName}Vo 参数
+     * @param vo     参数
+     * @param userId 操作人
      * @return ${domainPackage}.${domainName} 返回类型
      * @author ${author}
      * @createdAt ${createDate}
      */
-    public static ${domainName} domainToDto(${domainName}Vo ${objName}Vo) {
-        if (${objName}Vo == null) {
+    public static ${domainName} voToDomain(${voName} vo, Long userId) {
+        return voToDomain(vo, userId, new Date());
+    }
+
+    /**
+     * VO转实体类
+     *
+     * @param vo     参数
+     * @param userId 操作人
+     * @param date   操作时间
+     * @return ${domainPackage}.${domainName} 返回类型
+     * @author ${author}
+     * @createdAt ${createDate}
+     */
+    public static ${domainName} voToDomain(${voName} vo, Long userId, Date date) {
+        if (vo == null) {
             return null;
         }
         ${domainName} ${objName} = new ${domainName}();
-        BeanUtils.copyProperties(${objName}Vo, ${objName});
+        BeanUtils.copyProperties(vo, ${objName});
+        ${objName}.setUpdateTime(date);
+        ${objName}.setUpdateUserId(userId);
         return ${objName};
     }
 
     /**
-     * 实体类转DTO
+     * DTO转实体类
      *
-     * @param ${objName}Dto 参数
-     * @return ${basePackage}.${objName}.dto.${domainName}Dto 返回类型
+     * @param dto    参数
+     * @param userId 操作人
+     * @return ${domainPackage}.${domainName} 返回类型
      * @author ${author}
      * @createdAt ${createDate}
      */
-    public static ${domainName}Dto domainToDto(${domainName} ${objName}Dto) {
-        if (${objName}Dto == null) {
+    public static ${domainName} dtoToDomain(${dtoName} dto, Long userId) {
+        return dtoToDomain(dto, userId,  new Date());
+    }
+
+    /**
+     * DTO转实体类
+     *
+     * @param dto    参数
+     * @param userId 操作人
+     * @param date   操作时间
+     * @return ${domainPackage}.${domainName} 返回类型
+     * @author ${author}
+     * @createdAt ${createDate}
+     */
+    public static ${domainName} dtoToDomain(${dtoName} dto, Long userId, Date date) {
+        if (dto == null) {
             return null;
         }
-        ${domainName}Dto dto = new ${domainName}Dto();
-        BeanUtils.copyProperties(${objName}Dto, dto);
-        return dto;
+        ${domainName} ${objName} = new ${domainName}();
+        BeanUtils.copyProperties(dto, ${objName});
+        ${objName}.setUpdateTime(date);
+        ${objName}.setUpdateUserId(userId);
+        return ${objName};
     }
 }

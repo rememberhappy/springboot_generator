@@ -46,6 +46,7 @@ public abstract class AbstractGenXxoPlugin extends PluginAdapter {
         String xxoName = join(targetPackage.substring(0, targetPackage.lastIndexOf(".")), xxoType).toLowerCase();
 
         Set<String> importSet = new HashSet<>();
+        // 要排除的字段
         ArrayList<String> removerFieldList = new ArrayList<>();
         removerFieldList.add("isDel");
         removerFieldList.add("saasId");
