@@ -83,7 +83,7 @@ public class ${domainName}Controller {
     @Deprecated
     @ApiOperation(value = "主键查询")
     @RequestMapping(value = "/findById", method = RequestMethod.GET)
-    public Resp<${domainName}> findById(Long id) {
+    public Resp<${domainName}> findById(@RequestParam Long id) {
         Preconditions.checkArgument(id != null, "ID不能为空");
         ${domainName} ${objName} =${objName}Service.findById(id);
         return Resp.success(${objName});
@@ -99,8 +99,8 @@ public class ${domainName}Controller {
      * @updatedAt ${createDate}
      */
     @ApiOperation(value = "删除")
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public Resp<Boolean> delete(Long id) {
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public Resp<Boolean> delete(@RequestParam Long id) {
         Preconditions.checkArgument(id != null, "ID不能为空");
         ${domainName} ${objName} = new ${domainName}();
         ${objName}.setId(id);
