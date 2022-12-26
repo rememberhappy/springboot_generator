@@ -86,7 +86,7 @@ public class ${serviceName} extends BaseService<${domainName}> {
      */
     @Transactional(rollbackFor = Exception.class)
     public Long save(${voName} vo, Long saasId, Long branchId, Long userId) {
-        log.debug("save   >>>   vo：{}", JSON.toJSONString(vo, true));
+        log.debug("save   >>>   vo：{}，aasId：{}，branchId：{}，userId：{}", JSON.toJSONString(vo, true), saasId, branchId, userId);
         Date date = new Date();
         ${domainName} ${objName} = ${convertName}.voToDomain(vo, userId, date);
         // 校验数据
@@ -111,7 +111,7 @@ public class ${serviceName} extends BaseService<${domainName}> {
      */
     @Transactional(rollbackFor = Exception.class)
     public void update(${voName} vo, Long userId) {
-        log.debug("update   >>>   vo：{}", JSON.toJSONString(vo, true));
+        log.debug("update   >>>   vo：{}，userId：{}", JSON.toJSONString(vo, true), userId);
         Date date = new Date();
         ${domainName} ${objName} = ${convertName}.voToDomain(vo, userId, date);
         // 校验证书数据
