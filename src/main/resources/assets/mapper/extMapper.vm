@@ -12,6 +12,9 @@
         from ${tableName}
         <where>
             is_del = 0
+            <!--
+            ${findByCondition}
+            -->
         </where>
     </select>
 </mapper>

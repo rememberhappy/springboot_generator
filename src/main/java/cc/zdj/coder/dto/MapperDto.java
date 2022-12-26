@@ -18,4 +18,5 @@ public class MapperDto {
     private String updateByIdSql;
     private String deleteByIdSql;
     private String insertSql;
+    private String findByCondition;
 }

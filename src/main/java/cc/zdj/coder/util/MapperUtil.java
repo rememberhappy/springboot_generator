@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,15 @@ public class MapperUtil {
 
     private static final String UPPER_WHERE = "WHERE";
     private static final String LOWER_WHERE = "where";
+    static ArrayList<String> removerFieldList = new ArrayList<String>(8) {{
+        add("isDel");
+        add("saasId");
+        add("branchId");
+        add("createTime");
+        add("updateTime");
+        add("createUserId");
+        add("updateUserId");
+    }};
 
     /**
      * 获取resultMap中的sql语句
@@ -163,6 +173,45 @@ public class MapperUtil {
         return null;
     }
 
+    public static String getFindByCondition(String content) {
+        String res = getSqlByType("<update id=\"updateByPrimaryKeySelective\"[\\s|\\S]*?</update>", content);
+        if (StringUtils.isNotEmpty(res)) {
+            String[] lines = res.split("\n");
+            StringBuffer buffer = new StringBuffer();
+            buffer.append("\n");
+            boolean isCondition = false;
+            boolean isIfEnd = false;
+            for (String line : lines) {
+                if (StringUtils.isNotBlank(line.trim()) && line.contains("set>")) {
+                    isCondition = !isCondition;
+                    continue;
+                }
+                if (removerFieldList.stream().anyMatch(line::contains)) {
+                    continue;
+                }
+                if (StringUtils.isNotBlank(line.trim()) && isCondition) {
+                    if (line.contains("</if>")) {
+                        if (!isIfEnd) {
+                            continue;
+                        }
+                        isIfEnd = false;
+                    }
+                    if (line.contains(">")) {
+                        buffer.append("\t\t\t").append(line.trim()).append("\n");
+                    } else {
+                        buffer.append("\t\t\t\tand ").append(line.replace("},", "}").trim()).append("\n");
+                    }
+                    if (line.contains("<if")) {
+                        isIfEnd = true;
+                    }
+                }
+            }
+            res = buffer.toString();
+            return res;
+        }
+        return null;
+    }
+
     public static String getDeleteByIdSql(String content) {
         String res = getSqlByType("<delete([\\s|\\S]*?)</delete>", content);
         if (StringUtils.isNotEmpty(res)) {
@@ -188,6 +237,7 @@ public class MapperUtil {
         template.setDeleteByIdSql(getDeleteByIdSql(content));
         template.setUpdateByIdSql(getUpdateByIdSql(content));
         template.setFindByIdSql(getSelectByIdSql(content));
+        template.setFindByCondition(getFindByCondition(content));
         // 生成 findByObject 通用方法，暂时去掉，使用mapperVM中模板生成
 //        template.setFindByObjectSql(getFindByObjectSql(content));
         return template;

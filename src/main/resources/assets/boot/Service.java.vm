@@ -48,7 +48,8 @@ public class ${serviceName} extends BaseService<${domainName}> {
      * @updatedAt ${createDate}
      */
     public PageInfo<${dtoName}> findList(Integer pageNum, Integer pageSize, Long saasId, Long branchId, ${voName} vo) {
-        log.debug("findList   >>>   vo：{}，pageNum：{}，pageSizes：{}，aasId：{}，branchId：{}", JSON.toJSONString(vo, true), pageNum, pageSize, saasId, branchId);        ${domainName} ${objName}Query = new ${domainName}();
+        log.debug("findList   >>>   vo：{}，pageNum：{}，pageSizes：{}，aasId：{}，branchId：{}", JSON.toJSONString(vo, true), pageNum, pageSize, saasId, branchId);
+        ${domainName} ${objName}Query = new ${domainName}();
         if (vo != null) {
             // TODO 逻辑处理
         }

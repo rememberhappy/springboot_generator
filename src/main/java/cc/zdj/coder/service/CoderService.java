@@ -209,9 +209,9 @@ public class CoderService {
         DomainDto domainDto = new DomainDto(projectInfo, mybatisGenDto);
         // 获取sql信息
         MapperDto mapperDto = MapperUtil.generateMapperTemplate(content);
+        mapperDto.setTableName(mybatisGenDto.getTableName());
         mapperDto.setFullDaoName(String.format("%s.%s", domainDto.getDaoPackage(), domainDto.getDaoName()));
         mapperDto.setFullDomainName(mybatisGenDto.getFullDomainName());
-        mapperDto.setTableName(mybatisGenDto.getTableName());
 
         // 生成两个mapper文件
         MapperUtil.generateXmlFile(mapperDto, domainDto);
